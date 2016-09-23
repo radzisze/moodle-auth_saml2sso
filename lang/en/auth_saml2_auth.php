@@ -23,7 +23,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['auth_saml2_auth_description'] = 'Users can login using SAML2 Identity Provider';
+$string['auth_saml2_authdescription'] = 'Users can login using SAML2 Identity Provider';
 $string['pluginname'] = 'SAML2 Auth';
 
 /*
@@ -36,6 +36,7 @@ $string['label_autocreate'] = 'Auto create users';
 $string['label_entityid'] = 'SP source name';
 $string['label_logout_url_redir'] = 'Logout URL';
 $string['label_logout'] = 'Click here to logout';
+$string['label_edit_profile'] = 'Can user edit profile?';
 
 
 /**
@@ -49,3 +50,4 @@ $string['help_entityid'] = 'SP source name available in /config/authsources.php'
 $string['help_logout_url_redir'] = 'URL to redirect users on logout';
 $string['nouser'] = 'There\'s no user with the provided Id and auto signup is not allowed. The provided Id is: ';
 $string['error_create_user'] = 'A error occured when create a user account. Please, contact the administrator.';
+$string['help_edit_profile'] = 'If users cannot edit profile, they won\'t see the link to profile';

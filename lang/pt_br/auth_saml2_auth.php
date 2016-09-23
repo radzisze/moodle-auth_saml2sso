@@ -23,7 +23,7 @@
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['auth_saml2_auth_description'] = 'Usuários podem autenticar utilizando um provedor de identidade SAML2';
+$string['auth_saml2_authdescription'] = 'Usuários podem autenticar utilizando um provedor de identidade SAML2';
 $string['pluginname'] = 'SAML2 Auth';
 
 /*
@@ -36,6 +36,7 @@ $string['label_autocreate'] = 'Auto registro do usuário';
 $string['label_entityid'] = 'Nome do provedor de serviço a ser invocado';
 $string['label_logout_url_redir'] = 'URL de logout';
 $string['label_logout'] = 'Clique aqui para sair';
+$string['label_edit_profile'] = 'Usuário pode editar perfil?';
 
 
 /**
@@ -49,3 +50,4 @@ $string['help_entityid'] = 'Nome da fonte de autenticação no provedor de servi
 $string['help_logout_url_redir'] = 'URL para redirecionar os usuários ao sairem do Moodle';
 $string['nouser'] = 'Não existe um usuário com a identificação informada e a autoinscrição não está habilitada. O identificação informada foi: ';
 $string['error_create_user'] = 'Ocorreu um erro ao criar a conta de usuário. Por favor, entre em contato com o administrador.';
+$string['help_edit_profile'] = 'Se usuários não podem editar perfil, o link de perfil não é exibido';

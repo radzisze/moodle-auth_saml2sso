@@ -19,7 +19,7 @@
  * @package auth_saml2_auth
  * @author Daniel Miranda <daniellopes at gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * Parts of the above code was original made from another moodle plugin available at
+ * Parts of the code was original made for another moodle plugin available at
  * https://moodle.org/plugins/auth_saml2
  */
 defined('MOODLE_INTERNAL') || die();
@@ -33,17 +33,24 @@ require_once($CFG->libdir . '/authlib.php');
 class auth_plugin_saml2_auth extends auth_plugin_base {
 
     /**
+     * The name of the component. Used by the configuration.
+     */
+    const COMPONENT_NAME = 'auth_saml2_auth';
+    const LEGACY_COMPONENT_NAME = 'auth/saml2_auth';
+
+    /**
      * Config vars
      * @var string
      */
     public $defaults = array(
-        'autocreate' => false,
-        'dual_login' => true,
+        'autocreate' => 0,
+        'dual_login' => 1,
         'entityid' => '',
         'idpattr' => '',
         'logout_url_redir' => '',
         'mdlattr' => 'username',
         'sp_path' => '',
+        'edit_profile' => 0,
     );
 
     /**
@@ -61,7 +68,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'saml2_auth';
-        $this->config = (object) array_merge($this->defaults, (array) get_config('auth_saml2_auth'));
+        $this->config = (object) array_merge($this->defaults, (array) get_config(self::COMPONENT_NAME), (array) get_config(self::LEGACY_COMPONENT_NAME));
         $this->mapping = (object) self::$string_mapping;
     }
 
@@ -78,7 +85,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
          * Can bypass IdP auth.
          * To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
          */
-        if ($this->config->dual_login) {
+        if ((int) $this->config->dual_login) {
             $saml = optional_param('saml', 'on', PARAM_TEXT);
             if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';
@@ -149,17 +156,17 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         $newuser = false;
         if (!$is_user) {
             /**
-             * 
+             * Verify if user can be created
              */
-            if ($this->config->autocreate) {
+            if ((int) $this->config->autocreate) {
                 /**
-                 * Insere usuário na base de dados do Moodle
+                 * Insert new user
                  */
                 $is_user = create_user_record($uid, '', 'saml2_auth');
                 $newuser = true;
             } else {
                 /**
-                 * Se não for permitido criar uma conta no Moodle, exibe mensagem de erro
+                 * If autocreate is not allowed, show error
                  */
                 $this->error_page(get_string('nouser', 'auth_saml2_auth') . $uid);
             }
@@ -172,7 +179,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         }
 
         /**
-         * Faz mapeamento dos campos que devem ser atualizados em cada login
+         * Map fields that we need to update on every login
          */
         $mapconfig = get_config('auth/saml2_auth');
         $allkeys = array_keys(get_object_vars($mapconfig));
@@ -202,6 +209,12 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         $this->do_login($urltogo);
     }
 
+    /**
+     * Do login method
+     * @global type $USER
+     * @global type $CFG
+     * @param type $urltogo
+     */
     public function do_login($urltogo) {
         global $USER, $CFG;
         complete_user_login($USER);
@@ -251,6 +264,10 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         return false;
     }
 
+    /**
+     * 
+     * @return boolean
+     */
     function prevent_local_passwords() {
         return true;
     }
@@ -302,8 +319,11 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         return false;
     }
 
+    /**
+     * @return type
+     */
     function can_edit_profile() {
-        return false;
+        return (int) $this->config->edit_profile;
     }
 
     /**

@@ -108,42 +108,17 @@ $yesno = array(get_string('no'), get_string('yes'));
         </td>
     </tr>
     <!-- /logout_url_redir -->
-    <!-- validate_profile_url -->
+    <!-- edit_profile -->
     <tr valign="top">
-        <?php $field = 'validate_profile_url'; ?>
+        <?php $field = 'edit_profile'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
         </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+        <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2_auth') ?>
         </td>
     </tr>
-    <!-- /validate_profile_url -->
-    <!-- field_validate -->
-    <tr valign="top">
-        <?php $field = 'field_validate_profile_url'; ?>
-        <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
-        </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
-            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, 'auth_saml2_auth') ?>
-        </td>
-    </tr>
-    <!-- /field_validate -->
-    <!-- profile_redir_url -->
-    <tr valign="top">
-        <?php $field = 'profile_redir_url'; ?>
-        <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
-        </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
-            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, 'auth_saml2_auth') ?>
-        </td>
-    </tr>
-    <!-- /profile_redir_url -->
-
-    <?php print_auth_lock_options('saml2_auth', $user_fields, '<!-- empty help -->', true, false); ?>
+    <!-- /edit_profile -->
+    <?php print_auth_lock_options($this->authtype, $user_fields, '<!-- empty help -->', true, false); ?>
 </table>
