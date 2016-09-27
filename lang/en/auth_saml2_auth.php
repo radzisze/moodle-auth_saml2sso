@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,7 +42,7 @@ $string['label_edit_profile'] = 'Can user edit profile?';
  * _help config strings
  */
 $string['help_sp_path'] = 'Absolute path to SP installation. Ex.: /var/www/simplesamlphp/';
-$string['help_dual_login'] = 'Define if users can log-in direct to Moodle';
+$string['help_dual_login'] = 'Define if users can log-in directly to Moodle';
 $string['help_mapping'] = 'Which attribute in Moodle should match in IdP?';
 $string['help_autocreate'] = 'Allow create new users?';
 $string['help_entityid'] = 'SP source name available in /config/authsources.php';
