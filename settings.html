@@ -51,6 +51,31 @@ $yesno = array(get_string('no'), get_string('yes'));
         </td>
     </tr>
     <!-- /dual_login -->
+    <!-- single_signoff -->
+    <tr valign="top">
+        <?php $field = 'single_signoff'; ?>
+        <td align="right">
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
+        </td>
+        <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
+            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
+            <?php print_string('help_' . $field, 'auth_saml2_auth') ?>
+        </td>
+    </tr>
+    <!-- /single_signoff -->
+    <!-- username_mapping -->
+    <tr valign="top">
+        <?php $field = 'username_mapping'; ?>
+        <td align="right">
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
+        </td>
+        <td>
+            <input type="text" size="25" name="idpattr" value="<?php print $config->idpattr; ?>">
+            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
+            <?php print_string('help_' . $field, 'auth_saml2_auth') ?>
+        </td>
+    </tr>
+    <!-- /username_mapping -->
     <!-- moodle_mapping -->
     <?php
     $fields = array(
@@ -60,12 +85,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     );
     ?>
     <tr valign="top">
-        <?php $field = 'mapping'; ?>
+        <?php $field = 'moodle_mapping'; ?>
         <td align="right">
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2_auth') ?></label>
         </td>
         <td>
-            <input type="text" size="25" name="idpattr" value="<?php print $config->idpattr; ?>">
             <?php echo html_writer::select($fields, 'mdlattr', $config->mdlattr, false) ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2_auth') ?>

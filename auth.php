@@ -42,6 +42,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
     public $defaults = array(
         'autocreate' => 0,
         'dual_login' => 1,
+        'single_signoff' => 1,
         'entityid' => '',
         'idpattr' => '',
         'logout_url_redir' => '',
@@ -95,19 +96,25 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
 
     /**
      * Called when user hit the logout button
-     * Will get the URL from the logged in IdP and then redirect to config
-     * logout URL set in plugin config
+     * Will get the URL from the logged in IdP if Single Sign Off is setted
+     * and then redirect to config logout URL setted up in plugin config
      */
     public function logoutpage_hook() {
-        require_once($this->config->sp_path . 'lib/_autoload.php');
 
-        $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+        $urlLogout = $this->config->logout_url_redir;
 
-        $samlLogout = $auth->getLogoutURL($this->config->logout_url_redir);
+        // Check if we need to sign off users from IdP too
+        if ((int) $this->config->single_signoff) {
+            require_once($this->config->sp_path . 'lib/_autoload.php');
+
+            $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+
+            $urlLogout = $auth->getLogoutURL($this->config->logout_url_redir);
+        }
 
         require_logout();
 
-        redirect($samlLogout);
+        redirect($urlLogout);
     }
 
     /**

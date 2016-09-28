@@ -30,7 +30,9 @@ $string['pluginname'] = 'SAML2 Auth';
  */
 $string['label_sp_path'] = 'SAML2 Service Provider (SP)';
 $string['label_dual_login'] = 'Dual login';
-$string['label_mapping'] = 'IdP to Moodle Mapping';
+$string['label_single_signoff'] = 'Single Sign Off';
+$string['label_username_mapping'] = 'Username mapping';
+$string['label_moodle_mapping'] = 'Username checking';
 $string['label_autocreate'] = 'Auto create users';
 $string['label_entityid'] = 'SP source name';
 $string['label_logout_url_redir'] = 'Logout URL';
@@ -42,8 +44,10 @@ $string['label_edit_profile'] = 'Can user edit profile?';
  * _help config strings
  */
 $string['help_sp_path'] = 'Absolute path to SP installation. Ex.: /var/www/simplesamlphp/';
-$string['help_dual_login'] = 'Define if users can log-in directly to Moodle';
-$string['help_mapping'] = 'Which attribute in Moodle should match in IdP?';
+$string['help_dual_login'] = 'Define if users can log-in directly to Moodle. To bypass IdP you should add saml=off parameter. Ex.: /login/index.php?saml=off';
+$string['help_single_signoff'] = 'Single Sign Off users from Moodle and IdP?';
+$string['help_username_mapping'] = 'Which attribute from IdP should be used for username?';
+$string['help_moodle_mapping'] = 'Where to check if the username exists? If using idnumber, remember to mapping in Data mapping below';
 $string['help_autocreate'] = 'Allow create new users?';
 $string['help_entityid'] = 'SP source name available in /config/authsources.php';
 $string['help_logout_url_redir'] = 'URL to redirect users on logout';

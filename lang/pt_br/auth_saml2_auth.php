@@ -30,7 +30,9 @@ $string['pluginname'] = 'SAML2 Auth';
  */
 $string['label_sp_path'] = 'Provedor de Serviço (SP) SAML2';
 $string['label_dual_login'] = 'Dual login';
-$string['label_mapping'] = 'Mapeamento de campos no Moodle';
+$string['label_single_signoff'] = 'Single Sign Off';
+$string['label_username_mapping'] = 'Mapear username';
+$string['label_moodle_mapping'] = 'Validar username';
 $string['label_autocreate'] = 'Auto registro do usuário';
 $string['label_entityid'] = 'Nome do provedor de serviço a ser invocado';
 $string['label_logout_url_redir'] = 'URL de logout';
@@ -42,11 +44,13 @@ $string['label_edit_profile'] = 'Usuário pode editar perfil?';
  * _help config strings
  */
 $string['help_sp_path'] = 'Caminho absoluto da instalação do provedor de serviço. Ex.: /var/www/simplesamlphp/';
-$string['help_dual_login'] = 'Define se um usuário com conta interna pode autenticar diretamente no Moodle';
-$string['help_mapping'] = 'Qual atributo do Moodle deve corresponder com o atributo retornado do IdP?';
+$string['help_dual_login'] = 'Define se um usuário pode entrar no Moodle diretamente. Para entrar direto no Moodle você deve adicionar o parâmetro saml=off. Ex.: /login/index.php?saml=off';
+$string['help_single_signoff'] = 'Fazer logout do usuário no Moodle e no Provedor de Identidade?';
+$string['help_username_mapping'] = 'Qual atributo do IdP deve ser usado para username?';
+$string['help_moodle_mapping'] = 'Onde validar se o username existe? Se usar o idnumber, lembre de mapear em "Mapeamento de dados" abaixo';
 $string['help_autocreate'] = 'Permitir criar novos usuários?';
 $string['help_entityid'] = 'Nome da fonte de autenticação no provedor de serviço disponível em /config/authsources.php';
 $string['help_logout_url_redir'] = 'URL para redirecionar os usuários ao sairem do Moodle';
-$string['nouser'] = 'Não existe um usuário com a identificação informada e a autoinscrição não está habilitada. O identificação informada foi: ';
+$string['nouser'] = 'Não existe um usuário com a identificação informada e a autoinscrição não está habilitada. A identificação informada foi: ';
 $string['error_create_user'] = 'Ocorreu um erro ao criar a conta de usuário. Por favor, entre em contato com o administrador.';
 $string['help_edit_profile'] = 'Se usuários não podem editar perfil, o link de perfil não é exibido';
