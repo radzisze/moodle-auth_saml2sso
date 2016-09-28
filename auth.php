@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package auth_saml2_auth
+ * @package auth_saml2sso
  * @author Daniel Miranda <daniellopes at gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * Parts of the code was original made for another moodle plugin available at
@@ -29,11 +29,11 @@ require_once($CFG->libdir . '/authlib.php');
  * Plugin for authentication using SimpleSAMLphp Service Provider
  * For SimpleSAMLphp instructions, go to https://simplesamlphp.org/
  */
-class auth_plugin_saml2_auth extends auth_plugin_base {
+class auth_plugin_saml2sso extends auth_plugin_base {
 
     // The name of the component. Used by the configuration.
-    const COMPONENT_NAME = 'auth_saml2_auth';
-    const LEGACY_COMPONENT_NAME = 'auth/saml2_auth';
+    const COMPONENT_NAME = 'auth_saml2sso';
+    const LEGACY_COMPONENT_NAME = 'auth/saml2sso';
 
     /**
      * Config vars
@@ -66,7 +66,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
      * Constructor
      */
     public function __construct() {
-        $this->authtype = 'saml2_auth';
+        $this->authtype = 'saml2sso';
         $componentName = (array) get_config(self::COMPONENT_NAME);
         $legacyComponentName = (array) get_config(self::LEGACY_COMPONENT_NAME);
         $this->config = (object) array_merge($this->defaults, $componentName, $legacyComponentName);
@@ -156,11 +156,11 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
             // Verify if user can be created
             if ((int) $this->config->autocreate) {
                 // Insert new user
-                $isuser = create_user_record($uid, '', 'saml2_auth');
+                $isuser = create_user_record($uid, '', 'saml2sso');
                 $newuser = true;
             } else {
                 //If autocreate is not allowed, show error
-                $this->error_page(get_string('nouser', 'auth_saml2_auth') . $uid);
+                $this->error_page(get_string('nouser', 'auth_saml2sso') . $uid);
             }
         }
 
@@ -168,11 +168,11 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         if ($isuser) {
             $USER = get_complete_user_data('username', $isuser->username);
         } else {
-            $this->error_page(get_string('error_create_user', 'auth_saml2_auth'));
+            $this->error_page(get_string('error_create_user', 'auth_saml2sso'));
         }
 
         // Map fields that we need to update on every login
-        $mapconfig = get_config('auth/saml2_auth');
+        $mapconfig = get_config('auth/saml2sso');
         $allkeys = array_keys(get_object_vars($mapconfig));
         $touched = false;
         foreach ($allkeys as $key) {
@@ -225,7 +225,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
     /**
      * Old syntax of class constructor for backward compatibility.
      */
-    public function auth_plugin_saml2_auth() {
+    public function auth_plugin_saml2sso() {
         self::__construct();
     }
 
@@ -336,7 +336,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
      */
     function process_config($config) {
         foreach ($this->defaults as $key => $value) {
-            set_config($key, $config->$key, 'auth_saml2_auth');
+            set_config($key, $config->$key, 'auth_saml2sso');
         }
         return true;
     }
@@ -360,7 +360,7 @@ class auth_plugin_saml2_auth extends auth_plugin_base {
         $PAGE->set_url('/');
         echo $OUTPUT->header();
         echo $OUTPUT->box($msg);
-        echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', 'auth_saml2_auth') . '</a>');
+        echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', 'auth_saml2sso') . '</a>');
         echo $OUTPUT->footer();
         exit;
     }

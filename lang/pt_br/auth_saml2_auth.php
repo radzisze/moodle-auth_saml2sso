@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'auth_saml2_auth', language 'pt_br'.
+ * Strings for component 'auth_saml2sso', language 'pt_br'.
  *
- * @package auth_saml2_auth
+ * @package auth_saml2sso
  * @author Daniel Miranda <daniellopes at gmail.com>
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$string['auth_saml2_authdescription'] = 'Usuários podem autenticar utilizando um provedor de identidade SAML2';
+$string['auth_saml2ssodescription'] = 'Usuários podem autenticar utilizando um provedor de identidade SAML2';
 $string['pluginname'] = 'SAML2 Auth';
 
 /*
