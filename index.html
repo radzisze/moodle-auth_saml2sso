@@ -20,12 +20,9 @@
 
     <section class="main-content">
       <h1>
-<a id="moodle-authentication-using-simplesamlphp-identity-provider" class="anchor" href="#moodle-authentication-using-simplesamlphp-identity-provider" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Moodle Authentication using SimpleSAMLphp Identity Provider</h1>
+<a id="saml2-authentication-using-exists-simplesamlphp-service-provider" class="anchor" href="#saml2-authentication-using-exists-simplesamlphp-service-provider" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SAML2 Authentication using exists SimpleSAMLphp Service Provider</h1>
 
-<p>Moodle plugin for authentication using a SimpleSAMLphp Service Provider</p>
-
-<h2>
-<a id="youll-need-the-following-pre-requirement" class="anchor" href="#youll-need-the-following-pre-requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>You'll need the following pre-requirement:</h2>
+<p>You'll need the following pre-requirement:</p>
 
 <ul>
 <li>A working SimpleSAMLphp Service Provider (SP) installation (<a href="https://simplesamlphp.org">https://simplesamlphp.org</a>) <em>working means that the metadata from SP must be registered in Identity Provider (IdP). Can be found in /config/authsources.php</em>
@@ -34,7 +31,34 @@
 <li>The authsource name from SP in which your users will authenticate against</li>
 </ul>
 
-<p>To override the authentication and login directly in Moodle (ex.: using admin account), add the saml=off parameter in the URL (ex.: https://moodle/login/index.php?saml=off)</p>
+<p>There are a couple of related SAML plugins for Moodle. Below are the main diferences between this plugin, named as saml2_auth, and the others</p>
+
+<p>The key for this plugin is that you can use your exists Service Provider (SP) without needed to exchange the metadata with the Identity Provider (IdP) for every new Moodle instances. <em>(for instances in the same host name)</em></p>
+
+<h2>
+<a id="there-are-two-other-saml-plugins-that-canor-use-simplesamlphp" class="anchor" href="#there-are-two-other-saml-plugins-that-canor-use-simplesamlphp" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>There are two other SAML plugins that can/or use SimpleSAMLphp</h2>
+
+<ul>
+<li>auth_saml - There's no compatible version with Moodle 3.0+. The code is obsolete and the plugin go beyond the purpose of a authentication plugin, mixing auth and enrol rules.</li>
+<li>auth_saml2 - It's a complete solution for those that don't have a working SP installation, but, because it generate its own SP, for every single instance of Moodle that you install, you must exchange the metadata with the owner of the IdP. In a environment that there are more than one IdP, this is unpractical.</li>
+</ul>
+
+<h2>
+<a id="the-following-options-can-be-set-in-config" class="anchor" href="#the-following-options-can-be-set-in-config" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The following options can be set in config:</h2>
+
+<ul>
+<li>SimpleSAMLphp installation path</li>
+<li>Dual login (Yes/No) - Can login with manual accounts like admin</li>
+<li>Single Sign Off (Yes/No) - Should we sign off users from Moodle and IdP?</li>
+<li>Username mapping - Which attribute from IdP should be used for username</li>
+<li>Username checking - Where to check if the username exists</li>
+<li>Auto create users - Allow create new users</li>
+<li>SP source name - Generally default-sp in SimpleSAMLphp</li>
+<li>Logout URL to redirect users after logout</li>
+<li>Allow users to edit or not the profile</li>
+</ul>
+
+<p>To override the authentication and login directly in Moodle (ex.: using admin account), add the saml=off parameter in the URL (ex.: <a href="https://my.moodle/login/index.php?saml=off">https://my.moodle/login/index.php?saml=off</a>)</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/dmirandaa/moodle-auth_saml2_auth">Moodle SAML2 Auth</a> is maintained by <a href="https://github.com/dmirandaa">dmirandaa</a>.</span>
