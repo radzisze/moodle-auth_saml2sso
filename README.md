@@ -26,5 +26,6 @@ The key for this plugin is that you can use your exists Service Provider (SP) wi
 * SP source name - Generally default-sp in SimpleSAMLphp
 * Logout URL to redirect users after logout
 * Allow users to edit or not the profile
+* Ability to break the full name from IdP into firstname and lastname
 
 To override the authentication and login directly in Moodle (ex.: using admin account), add the saml=off parameter in the URL (ex.: https://my.moodle/login/index.php?saml=off)
