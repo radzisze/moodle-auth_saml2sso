@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 $string['auth_saml2ssodescription'] = 'Users can login using SAML2 Identity Provider';
-$string['pluginname'] = 'SAML2 Auth';
+$string['pluginname'] = 'SAML2 SSO Auth';
 
 /*
  * label config strings
@@ -38,7 +38,11 @@ $string['label_entityid'] = 'SP source name';
 $string['label_logout_url_redir'] = 'Logout URL';
 $string['label_logout'] = 'Click here to logout';
 $string['label_edit_profile'] = 'Can user edit profile?';
-
+$string['label_field_idp_firstname'] = 'Firstname field from IdP';
+$string['label_field_idp_lastname'] = 'Lastname field from IdP';
+$string['label_field_idp_fullname'] = 'Full name from IdP';
+$string['label_instructions_title'] = 'Instructions';
+$string['label_instructions_p1'] = 'You must fill First name, Surname and Email with whatever you want In Data mapping fields';
 
 /**
  * _help config strings
@@ -54,3 +58,6 @@ $string['help_logout_url_redir'] = 'URL to redirect users on logout';
 $string['nouser'] = 'There\'s no user with the provided Id and auto signup is not allowed. The provided Id is: ';
 $string['error_create_user'] = 'A error occured when create a user account. Please, contact the administrator.';
 $string['help_edit_profile'] = 'If users cannot edit profile, they won\'t see the link to profile';
+$string['help_field_idp_firstname'] = 'Field from IdP containing the user\'s first name' ;
+$string['help_field_idp_lastname'] = 'Field from IdP containing the user\'s last name';
+$string['help_field_idp_fullname'] = 'The user\'s name from IdP is a unique field? If yes, fill with the same value in the fields firstname and lastname bellow';

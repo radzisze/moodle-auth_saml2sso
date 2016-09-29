@@ -25,17 +25,25 @@
 $yesno = array(get_string('no'), get_string('yes'));
 
 ?>
+<div>
+    <div class="title">
+        <h2><?php print_string('label_instructions_title', 'auth_saml2sso') ?></h2>
+    </div>
+    <div class="content">
+        <p><?php print_string('label_instructions_p1', 'auth_saml2sso') ?></p>
+    </div>
+</div>
 <table cellspacing="0" cellpadding="5" border="0" class="generaltable">
     <!-- sp_path -->
     <tr valign="top">
         <?php $field = 'sp_path'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype); ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso'); ?></label>
         </td>
         <td>
             <input type="text" name="<?php echo $field; ?>" value="<?php print $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /sp_path -->
@@ -43,11 +51,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'dual_login'; ?>
         <td align="right">
-            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /dual_login -->
@@ -55,11 +63,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'single_signoff'; ?>
         <td align="right">
-            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /single_signoff -->
@@ -67,12 +75,12 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'username_mapping'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td>
             <input type="text" size="25" name="idpattr" value="<?php print $config->idpattr; ?>">
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /username_mapping -->
@@ -87,12 +95,12 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'moodle_mapping'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td>
             <?php echo html_writer::select($fields, 'mdlattr', $config->mdlattr, false) ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /moodle_mapping -->
@@ -100,11 +108,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'autocreate'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><?php echo html_writer::select($yesno, $field, $config->$field, false) ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /autocreate -->
@@ -112,11 +120,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'entityid'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /entityid -->
@@ -124,11 +132,11 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'logout_url_redir'; ?>
         <td align="right">
-            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /logout_url_redir -->
@@ -136,13 +144,49 @@ $yesno = array(get_string('no'), get_string('yes'));
     <tr valign="top">
         <?php $field = 'edit_profile'; ?>
         <td align="right">
-            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, $this->authtype) ?></label>
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
-            <?php print_string('help_' . $field, $this->authtype) ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
     </tr>
     <!-- /edit_profile -->
+    <!-- idp_fullname -->
+    <tr valign="top">
+        <?php $field = 'field_idp_fullname'; ?>
+        <td align="right">
+            <label for="label_<?php $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
+        </td>
+        <td><?php echo html_writer::select($yesno, $field, $config->$field, false); ?>
+            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
+        </td>
+    </tr>
+    <!-- /edit_profile -->
+    <!-- firstname_idp_field -->
+    <tr valign="top">
+        <?php $field = 'field_idp_firstname'; ?>
+        <td align="right">
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
+        </td>
+        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
+        </td>
+    </tr>
+    <!-- /firstname_idp_field -->
+    <!-- lastname_idp_field -->
+    <tr valign="top">
+        <?php $field = 'field_idp_lastname'; ?>
+        <td align="right">
+            <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
+        </td>
+        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+            <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
+            <?php print_string('help_' . $field, 'auth_saml2sso') ?>
+        </td>
+    </tr>
+    <!-- /lastname_idp_field -->
     <?php print_auth_lock_options($this->authtype, $user_fields, '<!-- empty help -->', true, false); ?>
 </table>
