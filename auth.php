@@ -49,12 +49,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         'entityid' => '',
         'logout_url_redir' => '',
         'edit_profile' => 0,
-        'field_idp_fullname' => 0,
+        'field_idp_fullname' => 1,
         'field_idp_firstname' => 'cn',
         'field_idp_lastname' => 'cn',
-        'field_map_firstname' => 'givenName',
-        'field_map_lastname' => 'surname',
-        'field_map_email' => 'email'
     );
 
     /**
@@ -73,11 +70,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'saml2sso';
-        $this->componentname = self::COMPONENT_NAME;
-        $this->legacycomponentname = self::LEGACY_COMPONENT_NAME;
-        $config = (array) get_config($this->componentname);
-        $legacyconfig = (array) get_config($this->legacycomponentname);
-        $this->config = (object) array_merge($this->defaults, $config, $legacyconfig);
+        $componentName = (array) get_config(self::COMPONENT_NAME);
+        $legacyComponentName = (array) get_config(self::LEGACY_COMPONENT_NAME);
+        $this->config = (object) array_merge($this->defaults, $componentName, $legacyComponentName);
         $this->mapping = (object) self::$stringMapping;
     }
 
@@ -142,18 +137,18 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // Email attribute
         // Here we insure that e-mail returned from identity provider (IdP) is catched
         // whenever it is email or mail attribute name
-        $attributes[$this->config->field_map_email][0] = isset($attributes['email']) ? trim(strtolower($attributes['email'][0])) : trim(strtolower($attributes['mail'][0]));
-
+        $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim(strtolower($attributes['email'][0])) : trim(strtolower($attributes['mail'][0]));
+        
         // If the field containing the user's name is a unique field, we need to break
         // into firstname and lastname
         if ((int) $this->config->field_idp_fullname) {
             // First name attribute
-            $attributes[$this->config->field_map_firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true)), "UTF-8") : $attributes[$this->config->field_idp_firstname][0];
+            $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true)), "UTF-8") : $attributes[$this->config->field_idp_firstname][0];
             // Last name attribute
-            $attributes[$this->config->field_map_lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " ")), "UTF-8") : $attributes[$this->config->field_idp_lastname][0];
+            $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " ")), "UTF-8") : $attributes[$this->config->field_idp_lastname][0];
         } else {
-            $attributes[$this->config->field_map_firstname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
-            $attributes[$this->config->field_map_lastname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
+            $attributes[$this->mapping->firstname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
+            $attributes[$this->mapping->lastname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
         }
 
         // User Id returned from IdP
@@ -172,7 +167,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
                 $newuser = true;
             } else {
                 //If autocreate is not allowed, show error
-                $this->error_page(get_string('nouser', $this->componentname) . $uid);
+                $this->error_page(get_string('nouser', self::COMPONENT_NAME) . $uid);
             }
         }
 
@@ -180,11 +175,11 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         if ($isuser) {
             $USER = get_complete_user_data('username', $isuser->username);
         } else {
-            $this->error_page(get_string('error_create_user', $this->componentname));
+            $this->error_page(get_string('error_create_user', self::COMPONENT_NAME));
         }
 
         // Map fields that we need to update on every login
-        $mapconfig = get_config($this->legacycomponentname);
+        $mapconfig = get_config(self::LEGACY_COMPONENT_NAME);
         $allkeys = array_keys(get_object_vars($mapconfig));
         $touched = false;
         foreach ($allkeys as $key) {
@@ -349,10 +344,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     function process_config($config) {
         foreach ($this->defaults as $key => $value) {
-            if (!isset($this->defaults->$key)) {
-                continue;
-            }
-            set_config($key, $config->$key, $this->componentname);
+            set_config($key, $config->$key, self::COMPONENT_NAME);
         }
         return true;
     }
@@ -376,7 +368,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         $PAGE->set_url('/');
         echo $OUTPUT->header();
         echo $OUTPUT->box($msg);
-        echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', $this->componentname) . '</a>');
+        echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', self::COMPONENT_NAME) . '</a>');
         echo $OUTPUT->footer();
         exit;
     }

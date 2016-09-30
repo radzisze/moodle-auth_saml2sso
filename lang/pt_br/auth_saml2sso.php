@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -43,7 +42,13 @@ $string['label_field_idp_firstname'] = 'Campo no IdP para o primeiro nome';
 $string['label_field_idp_lastname'] = 'Campo no IdP para o sobrenome';
 $string['label_field_idp_fullname'] = 'Nome completo no IdP';
 $string['label_instructions_title'] = 'Instruções';
-$string['label_instructions_p1'] = 'Você deve preencher Nome, Sobrenome e Endereço de email com o nome que você quiser em Mapeamento dos dados';
+$string['label_instructions_p1'] = '<p>Você deve preencher os campos abaixo em Mapeamento de dados:</p>'
+        . '<ul>'
+        . '<li>Nome => givenName</li>'
+        . '<li>Sobrenome => surname</li>'
+        . '<li>Endereço de email: => email</li>'
+        . '</ul>'
+        . '<p>Você pode mudar isso no array <code>$stringMapping</code> no arquivo <code>auth.php</code></p>';
 
 
 /**
