@@ -101,10 +101,12 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Called when user hit the logout button
      * Will get the URL from the logged in IdP if Single Sign Off is setted
      * and then redirect to config logout URL setted up in plugin config
+     * If URL is invalid or empty, redirect to Moodle main page
      */
     public function logoutpage_hook() {
+        global $CFG;
 
-        $urlLogout = $this->config->logout_url_redir;
+        $urlLogout = filter_var($this->config->logout_url_redir, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) ? $this->config->logout_url_redir : $CFG->wwwroot;
 
         // Check if we need to sign off users from IdP too
         if ((int) $this->config->single_signoff) {
@@ -112,7 +114,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
             $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
 
-            $urlLogout = $auth->getLogoutURL($this->config->logout_url_redir);
+            $urlLogout = $auth->getLogoutURL($urlLogout);
         }
 
         require_logout();
@@ -138,7 +140,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // Here we insure that e-mail returned from identity provider (IdP) is catched
         // whenever it is email or mail attribute name
         $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim(strtolower($attributes['email'][0])) : trim(strtolower($attributes['mail'][0]));
-        
+
         // If the field containing the user's name is a unique field, we need to break
         // into firstname and lastname
         if ((int) $this->config->field_idp_fullname) {
