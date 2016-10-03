@@ -41,7 +41,7 @@ $yesno = array(get_string('no'), get_string('yes'));
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso'); ?></label>
         </td>
         <td>
-            <input type="text" name="<?php echo $field; ?>" value="<?php print $config->$field; ?>"><br />
+            <input type="text" required="true" name="<?php echo $field; ?>" value="<?php print $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
@@ -78,7 +78,7 @@ $yesno = array(get_string('no'), get_string('yes'));
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
         <td>
-            <input type="text" size="25" name="idpattr" value="<?php print $config->idpattr; ?>">
+            <input type="text" required="true" size="25" name="idpattr" value="<?php print $config->idpattr; ?>">
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
@@ -122,7 +122,7 @@ $yesno = array(get_string('no'), get_string('yes'));
         <td align="right">
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+        <td><input type="text" required="true" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
@@ -170,7 +170,7 @@ $yesno = array(get_string('no'), get_string('yes'));
         <td align="right">
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+        <td><input type="text" required="true" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>
@@ -182,7 +182,7 @@ $yesno = array(get_string('no'), get_string('yes'));
         <td align="right">
             <label for="label_<?php echo $field; ?>"><?php print_string('label_' . $field, 'auth_saml2sso') ?></label>
         </td>
-        <td><input type="text" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
+        <td><input type="text" required="true" name="<?php echo $field; ?>" value="<?php echo $config->$field; ?>"><br />
             <?php if (isset($err[$field])) { echo $OUTPUT->notification($err[$field], 'notifyfailure'); } ?>
             <?php print_string('help_' . $field, 'auth_saml2sso') ?>
         </td>

@@ -62,8 +62,19 @@ $string['help_autocreate'] = 'Allow create new users?';
 $string['help_entityid'] = 'SP source name available in /config/authsources.php';
 $string['help_logout_url_redir'] = 'URL to redirect users on logout. If the URL is invalid or empty, it will redirect to Moodle main page. (ex.: https://go.to/another/url)';
 $string['nouser'] = 'There\'s no user with the provided Id and auto signup is not allowed. The provided Id is: ';
-$string['error_create_user'] = 'A error occured when create a user account. Please, contact the administrator.';
 $string['help_edit_profile'] = 'If users cannot edit profile, they won\'t see the link to profile';
-$string['help_field_idp_firstname'] = 'Field from IdP containing the user\'s first name' ;
-$string['help_field_idp_lastname'] = 'Field from IdP containing the user\'s last name';
-$string['help_field_idp_fullname'] = 'The user\'s name from IdP is a single field? If yes, fill with the same value in the fields firstname and lastname bellow';
+$string['help_field_idp_firstname'] = 'Field from IdP containing the user first name' ;
+$string['help_field_idp_lastname'] = 'Field from IdP containing the user last name';
+$string['help_field_idp_fullname'] = 'The username from IdP is a single field? If yes, fill with the same value in the fields firstname and lastname below';
+
+$string['error_create_user'] = 'A error occured when create a user account. Please, contact the administrator.';
+$string['error_sp_path'] = 'A SAML2 Service Provider (SP) path must be given in config';
+$string['error_idpattr'] = 'A Username mapping attribute must be given';
+$string['error_entityid'] = 'A SP source name must be given';
+$string['error_field_idp_firstname'] = 'The Firstname field from IdP is mandatory';
+$string['error_field_idp_lastname'] = 'The lastname field from IdP is mandatory';
+$string['error_lockconfig_field_map_firstname'] = 'The First name in Data mapping fields is mandatory';
+$string['error_lockconfig_field_map_lastname'] = 'The Surname in Data mapping fields is mandatory';
+$string['error_lockconfig_field_map_email'] = 'The Email address in Data mapping fields is mandatory';
+
+$string['success_config'] = 'All the config fields were saved successfully';

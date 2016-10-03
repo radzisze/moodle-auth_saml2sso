@@ -51,7 +51,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         'edit_profile' => 0,
         'field_idp_fullname' => 1,
         'field_idp_firstname' => 'cn',
-        'field_idp_lastname' => 'cn',
+        'field_idp_lastname' => 'cn'
     );
 
     /**
@@ -342,13 +342,26 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     }
 
     /**
-     * Processes and stores configuration data for this authentication plugin.
+     * Processes, validate and stores configuration data for this authentication plugin.
      */
     function process_config($config) {
-        foreach ($this->defaults as $key => $value) {
-            set_config($key, $config->$key, self::COMPONENT_NAME);
+        global $OUTPUT, $CFG;
+        $not_empty_fields = array('sp_path', 'idpattr', 'entityid', 'field_idp_firstname', 'field_idp_lastname', 'lockconfig_field_map_firstname', 'lockconfig_field_map_lastname', 'lockconfig_field_map_email');
+        foreach ($config as $key => $value) {
+            if (in_array($key, $not_empty_fields)) {
+                if (empty(trim($config->$key))) {
+                    $error = get_string('error_' . $key, self::COMPONENT_NAME);
+                    redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
+                }
+                // validate the simplesamlphp path and ensure that it has the
+                // appropriate trailing slashes (issue #1)
+                if ($key == 'sp_path') {
+                    $config->$key = '/' . trim($config->$key, '/') . '/';
+                }
+            }
+            set_config($key, trim($config->$key), self::COMPONENT_NAME);
         }
-        return true;
+        redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, get_string('success_config', self::COMPONENT_NAME), null, \core\output\notification::NOTIFY_SUCCESS);
     }
 
     /**
