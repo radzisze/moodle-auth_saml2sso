@@ -42,13 +42,7 @@ $string['label_field_idp_firstname'] = 'Firstname field from IdP';
 $string['label_field_idp_lastname'] = 'Lastname field from IdP';
 $string['label_field_idp_fullname'] = 'Full name from IdP';
 $string['label_instructions_title'] = 'Instructions';
-$string['label_instructions_p1'] = '<p>You must fill the following Data mapping fields as:</p>'
-        . '<ul>'
-        . '<li>Firstname => givenName</li>'
-        . '<li>Surname => surname</li>'
-        . '<li>Email address: => email</li>'
-        . '</ul>'
-        . '<p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
+$string['label_instructions_p1'] = '<p>You must fill the following Data mapping fields as:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
 
 /**
  * _help config strings

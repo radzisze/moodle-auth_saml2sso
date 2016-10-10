@@ -149,8 +149,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             // Last name attribute
             $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " ")), "UTF-8") : $attributes[$this->config->field_idp_lastname][0];
         } else {
-            $attributes[$this->mapping->firstname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
-            $attributes[$this->mapping->lastname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
+            $attributes[$this->mapping->firstname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_firstname][0]), "UTF-8");
+            $attributes[$this->mapping->lastname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_lastname][0]), "UTF-8");
         }
 
         // User Id returned from IdP
