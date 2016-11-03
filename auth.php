@@ -345,9 +345,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Processes, validate and stores configuration data for this authentication plugin.
      */
     function process_config($config) {
-        global $OUTPUT, $CFG;
-        $not_empty_fields = array('sp_path', 'idpattr', 'entityid', 'field_idp_firstname', 'field_idp_lastname', 'lockconfig_field_map_firstname', 'lockconfig_field_map_lastname', 'lockconfig_field_map_email');
-        foreach ($config as $key => $value) {
+        global $CFG;
+        $not_empty_fields = array('sp_path', 'idpattr', 'entityid', 'field_idp_firstname', 'field_idp_lastname');
+        foreach ($this->defaults as $key => $value) {
             if (in_array($key, $not_empty_fields)) {
                 if (empty(trim($config->$key))) {
                     $error = get_string('error_' . $key, self::COMPONENT_NAME);
@@ -361,7 +361,19 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             }
             set_config($key, trim($config->$key), self::COMPONENT_NAME);
         }
-        redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, get_string('success_config', self::COMPONENT_NAME), null, \core\output\notification::NOTIFY_SUCCESS);
+        if (empty($config->lockconfig_field_map_firstname)) {
+            $error = get_string('error_' . 'lockconfig_field_map_firstname', self::COMPONENT_NAME);
+            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
+        }
+        if (empty($config->lockconfig_field_map_lastname)) {
+            $error = get_string('error_' . 'lockconfig_field_map_lastname', self::COMPONENT_NAME);
+            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
+        }
+        if (empty($config->lockconfig_field_map_email)) {
+            $error = get_string('error_' . 'lockconfig_field_map_email', self::COMPONENT_NAME);
+            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
+        }
+        return true;
     }
 
     /**
