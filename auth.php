@@ -139,18 +139,18 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // Email attribute
         // Here we insure that e-mail returned from identity provider (IdP) is catched
         // whenever it is email or mail attribute name
-        $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim(strtolower($attributes['email'][0])) : trim(strtolower($attributes['mail'][0]));
+        $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim(core_text::strtolower($attributes['email'][0])) : trim(core_text::strtolower($attributes['mail'][0]));
 
         // If the field containing the user's name is a unique field, we need to break
         // into firstname and lastname
         if ((int) $this->config->field_idp_fullname) {
             // First name attribute
-            $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true)), "UTF-8") : $attributes[$this->config->field_idp_firstname][0];
+            $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true))) : $attributes[$this->config->field_idp_firstname][0];
             // Last name attribute
-            $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? mb_strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " ")), "UTF-8") : $attributes[$this->config->field_idp_lastname][0];
+            $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " "))) : $attributes[$this->config->field_idp_lastname][0];
         } else {
-            $attributes[$this->mapping->firstname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_firstname][0]), "UTF-8");
-            $attributes[$this->mapping->lastname][0] = mb_strtoupper(trim($attributes[$this->config->field_idp_lastname][0]), "UTF-8");
+            $attributes[$this->mapping->firstname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
+            $attributes[$this->mapping->lastname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
         }
 
         // User Id returned from IdP
