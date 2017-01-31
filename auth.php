@@ -155,7 +155,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // User Id returned from IdP
         // Will be used to get user from our Moodle database if exists
-        $uid = $attributes[$this->config->idpattr][0];
+      	// create_user_record lowercases the username, so we need to lower it here.
+        $uid = trim(core_text::strtolower($attributes[$this->config->idpattr][0]));
 
         // Now we check if the Id returned from IdP exists in our Moodle database
         $isuser = $DB->get_record('user', array($this->config->mdlattr => $uid));
