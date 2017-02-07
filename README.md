@@ -6,7 +6,7 @@ You'll need the following pre-requirement:
 * The absolute path for the SimpleSAMLphp installation on server
 * The authsource name from SP in which your users will authenticate against
 
-There are a couple of related SAML plugins for Moodle. Below are the main diferences between this plugin, named as saml2_auth, and the others
+There are a couple of related SAML plugins for Moodle. Below are the main diferences between this plugin, named as auth_saml2sso, and the others
 
 The key for this plugin is that you can use your exists Service Provider (SP) without needed to exchange the metadata with the Identity Provider (IdP) for every new Moodle instances. _(for instances in the same host name)_
 
