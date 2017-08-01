@@ -88,7 +88,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
         if ((int) $this->config->dual_login) {
             $saml = optional_param('saml', 'on', PARAM_TEXT);
-            if ($saml == 'off' || isset($SESSION->saml)) {
+            if ($saml == 'on') {
+                $SESSION->saml = null;
+            } else if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';
                 return;
             }
@@ -327,56 +329,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     function can_edit_profile() {
         return (int) $this->config->edit_profile;
     }
-
-    /**
-     * Prints a form for configuring this authentication plugin.
-     *
-     * This function is called from admin/auth.php, and outputs a full page with
-     * a form for configuring this plugin.
-     *
-     * @param array $page An object containing all the data for this page.
-     */
-    function config_form($config, $err, $user_fields) {
-        global $CFG, $OUTPUT;
-        $config = (object) array_merge($this->defaults, (array) $config);
-        include("settings.html");
-    }
-
-    /**
-     * Processes, validate and stores configuration data for this authentication plugin.
-     */
-    function process_config($config) {
-        global $CFG;
-        $not_empty_fields = array('sp_path', 'idpattr', 'entityid', 'field_idp_firstname', 'field_idp_lastname');
-        foreach ($this->defaults as $key => $value) {
-            if (in_array($key, $not_empty_fields)) {
-                if (empty(trim($config->$key))) {
-                    $error = get_string('error_' . $key, self::COMPONENT_NAME);
-                    redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
-                }
-                // validate the simplesamlphp path and ensure that it has the
-                // appropriate trailing slashes (issue #1)
-                if ($key == 'sp_path') {
-                    $config->$key = '/' . trim($config->$key, '/') . '/';
-                }
-            }
-            set_config($key, trim($config->$key), self::COMPONENT_NAME);
-        }
-        if (empty($config->lockconfig_field_map_firstname)) {
-            $error = get_string('error_' . 'lockconfig_field_map_firstname', self::COMPONENT_NAME);
-            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
-        }
-        if (empty($config->lockconfig_field_map_lastname)) {
-            $error = get_string('error_' . 'lockconfig_field_map_lastname', self::COMPONENT_NAME);
-            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
-        }
-        if (empty($config->lockconfig_field_map_email)) {
-            $error = get_string('error_' . 'lockconfig_field_map_email', self::COMPONENT_NAME);
-            redirect($CFG->wwwroot . '/admin/auth_config.php?auth=' . $this->authtype, $error, null, \core\output\notification::NOTIFY_ERROR);
-        }
-        return true;
-    }
-
+    
     /**
      * @global type $PAGE
      * @global type $OUTPUT
