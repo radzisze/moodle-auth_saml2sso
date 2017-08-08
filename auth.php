@@ -147,9 +147,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // into firstname and lastname
         if ((int) $this->config->field_idp_fullname) {
             // First name attribute
-            $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true))) : $attributes[$this->config->field_idp_firstname][0];
+            $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true))) : core_text::strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
             // Last name attribute
-            $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " "))) : $attributes[$this->config->field_idp_lastname][0];
+            $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " "))) : core_text::strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
         } else {
             $attributes[$this->mapping->firstname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
             $attributes[$this->mapping->lastname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
@@ -184,7 +184,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         }
 
         // Map fields that we need to update on every login
-        $mapconfig = get_config(self::LEGACY_COMPONENT_NAME);
+        $mapconfig = get_config(self::COMPONENT_NAME);
         $allkeys = array_keys(get_object_vars($mapconfig));
         $touched = false;
         foreach ($allkeys as $key) {
