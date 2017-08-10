@@ -88,9 +88,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
         if ((int) $this->config->dual_login) {
             $saml = optional_param('saml', 'on', PARAM_TEXT);
-            if ($saml == 'on') {
-                $SESSION->saml = null;
-            } else if ($saml == 'off' || isset($SESSION->saml)) {
+            if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';
                 return;
             }
