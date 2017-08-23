@@ -77,6 +77,13 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     }
 
     /**
+     * Load SimpleSAMLphp library autoloader
+     */
+    private function loadSSPlib() {
+        require_once($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php');
+    }
+    
+    /**
      * @global string $SESSION
      * @return type
      */
@@ -110,7 +117,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // Check if we need to sign off users from IdP too
         if ((int) $this->config->single_signoff) {
-            require_once($this->config->sp_path . 'lib/_autoload.php');
+            $this->loadSSPlib();
 
             $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
 
@@ -130,7 +137,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     public function saml2_login() {
         global $DB, $USER, $CFG;
-        require_once($this->config->sp_path . 'lib/_autoload.php');
+        $this->loadSSPlib();
 
         $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
         $auth->requireAuth();
@@ -337,7 +344,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function error_page($msg) {
         global $PAGE, $OUTPUT, $SITE;
 
-        require_once($this->config->sp_path . 'lib/_autoload.php');
+        $this->loadSSPlib();
 
         $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
 
