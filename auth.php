@@ -80,7 +80,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Load SimpleSAMLphp library autoloader
      */
     private function getSSPauth() {
-        require_once($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php');
+        require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
 
         return new SimpleSAML_Auth_Simple($this->config->entityid);
     }
@@ -354,6 +354,39 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', self::COMPONENT_NAME) . '</a>');
         echo $OUTPUT->footer();
         exit;
+    }
+    
+    /**
+     * Test if settings are correct, print info to output.
+     */
+    public function test_settings() {
+        global $OUTPUT;
+
+        // NOTE: this is not localised intentionally, admins are supposed to understand English at least a bit...
+
+        if (empty($this->config->sp_path)) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path not set', \core\output\notification::NOTIFY_WARNING);
+            return;
+        }
+        if (!empty(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+                && $this->config->sp_path != dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path differs from the environment default ('
+                        . dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+                        . '): it could be fine, but check if the library has been updated', \core\output\notification::NOTIFY_INFO);
+        }
+        if (!file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php')
+		|| !file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php')) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path seems to be invalid', \core\output\notification::NOTIFY_WARNING);
+            return;
+        }
+
+        require $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+        @include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        if ($config['store.type'] == 'phpsession') {
+            echo $OUTPUT->notification('It seems SimpleSAMLphp uses default PHP session storage, it could be troublesome: switch to another store.type in config.php', \core\output\notification::NOTIFY_INFO);		
+        }
+        
+        echo $OUTPUT->notification('Everything seems ok', \core\output\notification::NOTIFY_SUCCESS);
     }
 
 }
