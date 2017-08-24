@@ -27,40 +27,41 @@ $string['pluginname']                               = 'SAML2 SSO Auth';
 $string['settings_saml2sso']                        = '';
 
 //label config strings
-$string['label_sp_path']                            = 'SAML2 Service Provider (SP)';
+$string['label_sp_path']                            = 'SimpleSAMLphp library path';
 $string['label_dual_login']                         = 'Dual login';
 $string['label_single_signoff']                     = 'Single Sign Off';
-$string['label_idpattr']                            = 'Username mapping';
+$string['label_idpattr']                            = 'Username attribute';
 $string['label_moodle_mapping']                     = 'Username checking';
 $string['label_autocreate']                         = 'Auto create users';
 $string['label_entityid']                           = 'SP source name';
 $string['label_logout_url_redir']                   = 'Logout URL';
 $string['label_logout']                             = 'Click here to logout';
 $string['label_edit_profile']                       = 'Can user edit profile?';
-$string['label_field_idp_firstname']                = 'Firstname field from IdP';
-$string['label_field_idp_lastname']                 = 'Lastname field from IdP';
-$string['label_field_idp_fullname']                 = 'Full name from IdP';
+$string['label_field_idp_firstname']                = 'Firstname attribute from IdP';
+$string['label_field_idp_lastname']                 = 'Lastname attribute from IdP';
+$string['label_field_idp_fullname']                 = 'Full name from IdP?';
 $string['label_instructions_title']                 = 'Instructions';
 $string['label_instructions_p1']                    = '<p>You must fill the following Data mapping fields as:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
 
 //_help config strings
-$string['help_sp_path']                             = 'Absolute path to SP installation. Ex.: /var/www/simplesamlphp/';
+$string['help_sp_path']                             = 'Absolute path to SSP installation. Ex.: /var/www/simplesamlphp/';
 $string['help_dual_login']                          = 'Define if users can log-in directly to Moodle. To bypass IdP you should add saml=off parameter. Ex.: /login/index.php?saml=off';
 $string['help_single_signoff']                      = 'Single Sign Off users from Moodle and IdP?';
 $string['help_idpattr']                             = 'Which attribute from IdP should be used for username?';
-$string['help_moodle_mapping']                      = 'Where to check if the username exists? If using idnumber, remember to mapping in Data mapping below';
+$string['help_moodle_mapping']                      = 'Where to check if the username exists? If using '
+        . get_string('idnumber') . ', remember to mapping in Data mapping below';
 $string['help_autocreate']                          = 'Allow create new users?';
 $string['help_entityid']                            = 'SP source name available in /config/authsources.php';
 $string['help_logout_url_redir']                    = 'URL to redirect users on logout. If the URL is invalid or empty, it will redirect to Moodle main page. (ex.: https://go.to/another/url)';
-$string['nouser']                                   = 'There\'s no user with the provided Id and auto signup is not allowed. The provided Id is: ';
+$string['nouser']                                   = 'There\'s no Moodle user with the provided Id and auto signup is not allowed. The provided Id is: ';
 $string['help_edit_profile']                        = 'If users cannot edit profile, they won\'t see the link to profile';
-$string['help_field_idp_firstname']                 = 'Field from IdP containing the user first name' ;
-$string['help_field_idp_lastname']                  = 'Field from IdP containing the user last name';
-$string['help_field_idp_fullname']                  = 'The username from IdP is a single field? If yes, fill with the same value in the fields firstname and lastname below';
+$string['help_field_idp_firstname']                 = 'Attribute from IdP containing the user first name' ;
+$string['help_field_idp_lastname']                  = 'Attribute from IdP containing the user last name';
+$string['help_field_idp_fullname']                  = 'The username from IdP is a single attribute (ex. cn)? If yes, fill with the same value in the fields firstname and lastname below';
 
 //error config strings
 $string['error_create_user']                        = 'A error occured when create a user account. Please, contact the administrator.';
-$string['error_sp_path']                            = 'A SAML2 Service Provider (SP) path must be given in config';
+$string['error_sp_path']                            = 'The path to SimpleSAMLphp libraries must be given in config';
 $string['error_idpattr']                            = 'A Username mapping attribute must be given';
 $string['error_entityid']                           = 'A SP source name must be given';
 $string['error_field_idp_firstname']                = 'The Firstname field from IdP is mandatory';
