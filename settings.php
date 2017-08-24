@@ -180,6 +180,7 @@ if ($ADMIN->fulltree) {
             $authplugin->userfields, 
             new lang_string('auth_fieldlocks_help', 'auth'), 
             true, 
-            false
+            false,
+            $authplugin->get_custom_user_profile_fields()
     );
 }
