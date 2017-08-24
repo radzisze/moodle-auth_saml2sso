@@ -189,7 +189,10 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // Map fields that we need to update on every login
         $mapconfig = get_config(self::COMPONENT_NAME);
-        $allkeys = array_keys(get_object_vars($mapconfig));
+        $standardkeys = array_keys(get_object_vars($mapconfig));
+        $customkeys = $this->get_custom_user_profile_fields();
+        $allkeys = array_merge($standardkeys, $customkeys);
+        
         $touched = false;
         foreach ($allkeys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
@@ -209,6 +212,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         if ($touched) {
             require_once($CFG->dirroot . '/user/lib.php');
             user_update_user($USER, false, false);
+            profile_save_data($USER);
         }
 
         // now we get the URL to where user wanna go previouly
