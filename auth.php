@@ -145,7 +145,15 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // Email attribute
         // Here we insure that e-mail returned from identity provider (IdP) is catched
         // whenever it is email or mail attribute name
-        $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim($attributes['email'][0]) : trim($attributes['mail'][0]);
+        if (isset($attributes['email'])) {
+            $attributes[$this->mapping->email][0] = trim($attributes['email'][0]);
+        }
+        else if (isset($attributes['mail'])) {
+            $attributes[$this->mapping->email][0] = trim($attributes['mail'][0]);
+        }
+        else {
+            ;  // Hum...
+        }
 
         // If the field containing the user's name is a unique field, we need to break
         // into firstname and lastname
@@ -202,8 +210,11 @@ class auth_plugin_saml2sso extends auth_plugin_base {
                     $updateonlogin = $mapconfig->{'field_updatelocal_' . $field} === 'onlogin';
 
                     if ($newuser || $updateonlogin) {
-                        $USER->$field = $attributes[$attr][0];
-                        $touched = true;
+                        // Empty attribute must leave untouched.
+                        if (isset($attributes[$attr]) && count($attributes[$attr]) > 0) {
+                            $USER->$field = $attributes[$attr][0];
+                            $touched = true;
+                        }
                     }
                 }
             }
