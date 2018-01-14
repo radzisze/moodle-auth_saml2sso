@@ -40,7 +40,7 @@ if ($ADMIN->fulltree) {
             'auth_saml2sso/'. $field_setting,
             new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
             new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
+            !empty(getenv('SIMPLESAMLPHP_CONFIG_DIR')) ? dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR')) : '',
             PARAM_TEXT,
             50,
             255
@@ -180,6 +180,7 @@ if ($ADMIN->fulltree) {
             $authplugin->userfields, 
             new lang_string('auth_fieldlocks_help', 'auth'), 
             true, 
-            false
+            false,
+            $authplugin->get_custom_user_profile_fields()
     );
 }

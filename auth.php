@@ -77,6 +77,15 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     }
 
     /**
+     * Load SimpleSAMLphp library autoloader
+     */
+    private function getSSPauth() {
+        require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+
+        return new SimpleSAML_Auth_Simple($this->config->entityid);
+    }
+    
+    /**
      * @global string $SESSION
      * @return type
      */
@@ -110,9 +119,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // Check if we need to sign off users from IdP too
         if ((int) $this->config->single_signoff) {
-            require_once($this->config->sp_path . 'lib/_autoload.php');
-
-            $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+            $auth = $this->getSSPauth();
 
             $urlLogout = $auth->getLogoutURL($urlLogout);
         }
@@ -130,16 +137,23 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     public function saml2_login() {
         global $DB, $USER, $CFG;
-        require_once($this->config->sp_path . 'lib/_autoload.php');
 
-        $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+        $auth = $this->getSSPauth();
         $auth->requireAuth();
         $attributes = $auth->getAttributes();
 
         // Email attribute
         // Here we insure that e-mail returned from identity provider (IdP) is catched
         // whenever it is email or mail attribute name
-        $attributes[$this->mapping->email][0] = isset($attributes['email']) ? trim(core_text::strtolower($attributes['email'][0])) : trim(core_text::strtolower($attributes['mail'][0]));
+        if (isset($attributes['email'])) {
+            $attributes[$this->mapping->email][0] = trim($attributes['email'][0]);
+        }
+        else if (isset($attributes['mail'])) {
+            $attributes[$this->mapping->email][0] = trim($attributes['mail'][0]);
+        }
+        else {
+            ;  // Hum...
+        }
 
         // If the field containing the user's name is a unique field, we need to break
         // into firstname and lastname
@@ -149,8 +163,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             // Last name attribute
             $attributes[$this->mapping->lastname][0] = strstr($attributes[$this->config->field_idp_lastname][0], " ") ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_lastname][0], " "))) : core_text::strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
         } else {
-            $attributes[$this->mapping->firstname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
-            $attributes[$this->mapping->lastname][0] = core_text::strtoupper(trim($attributes[$this->config->field_idp_lastname][0]));
+            $attributes[$this->mapping->firstname][0] = trim($attributes[$this->config->field_idp_firstname][0]);
+            $attributes[$this->mapping->lastname][0] = trim($attributes[$this->config->field_idp_lastname][0]);
         }
 
         // User Id returned from IdP
@@ -183,7 +197,10 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // Map fields that we need to update on every login
         $mapconfig = get_config(self::COMPONENT_NAME);
-        $allkeys = array_keys(get_object_vars($mapconfig));
+        $standardkeys = array_keys(get_object_vars($mapconfig));
+        $customkeys = $this->get_custom_user_profile_fields();
+        $allkeys = array_merge($standardkeys, $customkeys);
+        
         $touched = false;
         foreach ($allkeys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
@@ -193,8 +210,11 @@ class auth_plugin_saml2sso extends auth_plugin_base {
                     $updateonlogin = $mapconfig->{'field_updatelocal_' . $field} === 'onlogin';
 
                     if ($newuser || $updateonlogin) {
-                        $USER->$field = $attributes[$attr][0];
-                        $touched = true;
+                        // Empty attribute must leave untouched.
+                        if (isset($attributes[$attr]) && count($attributes[$attr]) > 0) {
+                            $USER->$field = $attributes[$attr][0];
+                            $touched = true;
+                        }
                     }
                 }
             }
@@ -203,6 +223,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         if ($touched) {
             require_once($CFG->dirroot . '/user/lib.php');
             user_update_user($USER, false, false);
+            profile_save_data($USER);
         }
 
         // now we get the URL to where user wanna go previouly
@@ -337,9 +358,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function error_page($msg) {
         global $PAGE, $OUTPUT, $SITE;
 
-        require_once($this->config->sp_path . 'lib/_autoload.php');
-
-        $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+        $auth = $this->getSSPauth();
 
         $samlLogout = $auth->getLogoutURL($this->config->logout_url_redir);
 
@@ -350,6 +369,39 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         echo $OUTPUT->box('<a href="' . $samlLogout . '">' . get_string('label_logout', self::COMPONENT_NAME) . '</a>');
         echo $OUTPUT->footer();
         exit;
+    }
+    
+    /**
+     * Test if settings are correct, print info to output.
+     */
+    public function test_settings() {
+        global $OUTPUT;
+
+        // NOTE: this is not localised intentionally, admins are supposed to understand English at least a bit...
+
+        if (empty($this->config->sp_path)) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path not set', \core\output\notification::NOTIFY_WARNING);
+            return;
+        }
+        if (!empty(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+                && $this->config->sp_path != dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path differs from the environment default ('
+                        . dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+                        . '): it could be fine, but check if the library has been updated', \core\output\notification::NOTIFY_INFO);
+        }
+        if (!file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php')
+		|| !file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php')) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib path seems to be invalid', \core\output\notification::NOTIFY_WARNING);
+            return;
+        }
+
+        require $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+        @include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        if ($config['store.type'] == 'phpsession') {
+            echo $OUTPUT->notification('It seems SimpleSAMLphp uses default PHP session storage, it could be troublesome: switch to another store.type in config.php', \core\output\notification::NOTIFY_INFO);		
+        }
+        
+        echo $OUTPUT->notification('Everything seems ok', \core\output\notification::NOTIFY_SUCCESS);
     }
 
 }
