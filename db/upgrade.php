@@ -47,10 +47,10 @@ function xmldb_auth_saml2sso_upgrade($oldversion) {
         // Convert info in config plugins from auth/saml2sso to auth_saml2sso.
         upgrade_fix_config_auth_plugin_names('saml2sso');
         upgrade_fix_config_auth_plugin_defaults('saml2sso');
-        upgrade_plugin_savepoint(true, 2017080100, 'auth', 'saml2sso');
+        upgrade_plugin_savepoint(true, 2018011400, 'auth', 'saml2sso');
     }
 
-    // Automatically generated Moodle v3.3.0 release upgrade line.
+    // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;
