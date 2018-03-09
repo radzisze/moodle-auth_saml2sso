@@ -25,7 +25,14 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    
+
+    if (empty(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+            && empty(get_config('auth_saml2sso', 'sp_path'))) {
+        $warning = $OUTPUT->notification('SIMPLESAMLPHP_CONFIG_DIR environment variable is not set'
+                . ', review your Apache configuration or manually specify the lib path', \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('auth_saml2sso/envvar_missing', '', $warning));
+    }
+
     $yesno = array(get_string('no'), get_string('yes'));
 
     $settings->add(new admin_setting_heading(
@@ -104,7 +111,8 @@ if ($ADMIN->fulltree) {
         )
     );
     
-    $field_setting = 'entityid';
+    // Migrate from misleading entityid config key
+    $field_setting = 'authsource';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
             new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
