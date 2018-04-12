@@ -426,7 +426,27 @@ class auth_plugin_saml2sso extends auth_plugin_base {
                     . implode(', ', $sourcesnames), \core\output\notification::NOTIFY_WARNING);
             return;
         }
-        
+
+        if (!empty($this->config->user_directory)) {
+            $plugin = get_auth_plugin($this->config->user_directory);
+            if (!$plugin) {
+                echo $OUTPUT->notification('Invalid directory plugin \''
+                        . $this->config->user_directory . '\'', \core\output\notification::NOTIFY_WARNING);
+            }
+            if (method_exists($plugin, 'test_settings')) {
+                $options[$this->config->user_directory] = get_string('pluginname', 'auth_'.$this->config->user_directory);
+                $url = new moodle_url('/auth/test_settings.php', array('sesskey'=>sesskey(), 'auth' => $this->config->user_directory));
+                echo $OUTPUT->notification('A sync process with \'' . get_string('pluginname', 'auth_'.$this->config->user_directory)
+                        . '\' auth plugin is enable. <a href="' . $url
+                        . '">Check its configuration</a>.', \core\output\notification::NOTIFY_INFO);
+
+            }
+            else {
+                echo $OUTPUT->notification('A sync process with \'' . get_string('pluginname', 'auth_'.$this->config->user_directory)
+                        . '\' auth plugin is enable. Please check its configuration too.', \core\output\notification::NOTIFY_INFO);
+            }
+        }
+
         echo $OUTPUT->notification('Everything seems ok', \core\output\notification::NOTIFY_SUCCESS);
     }
 

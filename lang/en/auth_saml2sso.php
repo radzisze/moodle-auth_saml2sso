@@ -48,7 +48,8 @@ $string['help_sp_path']                             = 'Absolute path to Service 
 $string['help_dual_login']                          = 'Define if users can log-in directly to Moodle. To bypass Indentity Provider you should add saml=off parameter. Ex.: /login/index.php?saml=off';
 $string['help_single_signoff']                      = 'Single Sign Off users from Moodle and IdP?';
 $string['help_idpattr']                             = 'Which attribute from Identity Provider should be used for username?';
-$string['help_moodle_mapping']                      = 'Where to check if the username exists? If using ' . get_string('idnumber') . ', remember to mapping in Data mapping below';
+$string['help_moodle_mapping']                      = 'Where to check if the username exists? If using \'' .
+        get_string('idnumber') . '\', remember to mapping in Data mapping below';
 $string['help_autocreate']                          = 'Allow create new users?';
 $string['help_authsource']                            = 'Service Provider authentication source name available in /config/authsources.php SimpleSAMLphp installation';
 $string['help_logout_url_redir']                    = 'URL to redirect users on logout. If the URL is invalid or empty, it will redirect to Moodle main page. (ex.: https://goto/another/url)';
@@ -70,3 +71,21 @@ $string['error_lockconfig_field_map_lastname']      = 'The Surname in Data mappi
 $string['error_lockconfig_field_map_email']         = 'The Email address in Data mapping fields is mandatory';
 
 $string['success_config']                           = 'All the config fields were saved successfully';
+
+$string['label_profile_settings']                   = 'SAML attributes and user profile';
+
+$string['label_sync_settings']        = 'Users sync';
+$string['label_user_directory']       = 'User directory';
+$string['help_user_directory']        = 'An auth plugin with listing capability';
+$string['label_takeover_users']       = 'Takeover existing users';
+$string['help_takeover_users']        = '
+Existing users belonging to the auth plugin providing user directory
+will switch to ' . $string['pluginname'] . ' authentication.<br/>
+If used at plugin installation, this option provide a migration
+from a Moodle system using LDAP (or DB) authentication to SAML SSO.<br/>
+Conversion took place when run as a ' . get_string('scheduledtasks', 'tool_task') .
+'Setting \'No\', only new users will use SAML SSO.';
+$string['label_verbose_sync']        = 'Show details';
+$string['help_verbose_sync']         = 'Enable verbose report';
+
+$string['synctask']        = 'Users sync';

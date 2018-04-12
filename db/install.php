@@ -15,16 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * auth_sync installer script.
  *
  * @package auth_saml2sso
- * @author Daniel Miranda <daniellopes at gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2018 Marco Ferrante, University of Genoa (I) <marco@csita.unige.it>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018041206;              // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires = 2017051501;             // Requires this Moodle version
-$plugin->component = 'auth_saml2sso';       // Full name of the plugin (used for diagnostics)
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = 'v3.4-r02';
+function xmldb_auth_db_install() {
+    global $CFG, $DB;
+
+}
