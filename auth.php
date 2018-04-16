@@ -84,13 +84,46 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         return new SimpleSAML_Auth_Simple($this->config->entityid);
     }
-    
+
+
+    /**
+     * Makes the saml2 plugin appear as a idsp on login screen
+     * @param string $wantsurl
+     * @return array
+     * Added by Praxis
+     */
+    function loginpage_idp_list($wantsurl) {
+        $url = '?saml=on';
+        return [[
+            'url' => new moodle_url($url),
+            'name' => '',
+            'iconurl' => new moodle_url('/auth/saml2sso/pix/saml-login.png')
+        ]];
+    }
+
+
     /**
      * @global string $SESSION
      * @return type
+     * Changed by praxis
      */
     public function loginpage_hook() {
-        global $SESSION;
+        global $SESSION, $CFG;
+
+
+        /* changes by praxis */
+        // check if saml is set to on in the url, to redirect to the saml login
+
+        if(isset($_GET['saml'])=='on') {
+            $SESSION->saml='on';
+
+            $this->saml2_login();
+
+        } else {
+            $SESSION->saml = 'off';
+            return;
+        }
+
 
         // Check if dual login is enabled.
         // Can bypass IdP auth.
@@ -103,7 +136,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             }
         }
 
-        $this->saml2_login();
+       // $this->saml2_login();
     }
 
     /**
