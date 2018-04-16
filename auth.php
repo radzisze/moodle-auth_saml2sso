@@ -110,33 +110,32 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function loginpage_hook() {
         global $SESSION, $CFG;
 
-
-        /* changes by praxis */
-        // check if saml is set to on in the url, to redirect to the saml login
-
-        if(isset($_GET['saml'])=='on') {
-            $SESSION->saml='on';
-
-            $this->saml2_login();
-
-        } else {
-            $SESSION->saml = 'off';
-            return;
-        }
-
-
         // Check if dual login is enabled.
         // Can bypass IdP auth.
         // To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
         if ((int) $this->config->dual_login) {
-            $saml = optional_param('saml', 'on', PARAM_TEXT);
+
+            /* changes by praxis */
+            // check if saml is set to on in the url, to redirect to the saml login
+            if(isset($_GET['saml'])=='on') {
+                $SESSION->saml='on';
+                $saml = optional_param('saml', 'on', PARAM_TEXT);
+                $this->saml2_login();
+
+            } else {
+                $SESSION->saml = 'off';
+                return;
+            }
+
+
+
             if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';
                 return;
             }
         }
 
-       // $this->saml2_login();
+        $this->saml2_login();
     }
 
     /**
