@@ -94,13 +94,20 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     function loginpage_idp_list($wantsurl) {
         $url = '?saml=on';
+
+        if (isset($this->config->button_url) AND !empty($this->config->button_url)) {
+         $button_path = new moodle_url($this->config->button_url);
+        } else {
+         $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        }
+
         return [[
             'url' => new moodle_url($url),
             'name' => '',
-            'iconurl' => new moodle_url('/auth/saml2sso/pix/saml-login.png')
+            'iconurl' => $button_path
+
         ]];
     }
-
 
     /**
      * @global string $SESSION
@@ -108,11 +115,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Changed by praxis
      */
     public function loginpage_hook() {
-        global $SESSION, $CFG;
+        global $SESSION, $CFG, $OUTPUT, $PAGE;
 
-        // Check if dual login is enabled.
-        // Can bypass IdP auth.
-        // To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
+
         if ((int) $this->config->dual_login) {
 
             /* changes by praxis */
@@ -126,8 +131,6 @@ class auth_plugin_saml2sso extends auth_plugin_base {
                 $SESSION->saml = 'off';
                 return;
             }
-
-
 
             if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';

@@ -27,6 +27,7 @@ $string['pluginname']                               = 'SAML2 SSO Auth';
 $string['settings_saml2sso']                        = '';
 
 //label config strings
+$string['label_button_url']                         = 'Url to button (image)';
 $string['label_sp_path']                            = 'SimpleSAMLphp library path';
 $string['label_dual_login']                         = 'Dual login';
 $string['label_single_signoff']                     = 'Single Sign Off';
@@ -44,6 +45,7 @@ $string['label_instructions_title']                 = 'Instructions';
 $string['label_instructions_p1']                    = '<p>You must fill the following Data mapping fields as:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
 
 //_help config strings
+$string['help_button_url']                          = 'Url to an image that will be used as login button. Max 50px high';
 $string['help_sp_path']                             = 'Absolute path to Service Provider (SP) installation. Ex.: /var/www/simplesamlphp/';
 $string['help_dual_login']                          = 'Define if users can log-in directly to Moodle. To bypass Indentity Provider you should add saml=off parameter. Ex.: /login/index.php?saml=off';
 $string['help_single_signoff']                      = 'Single Sign Off users from Moodle and IdP?';
