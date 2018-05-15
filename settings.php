@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -254,12 +255,6 @@ if ($ADMIN->fulltree) {
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('saml2sso');
     display_auth_lock_options(
-            $settings, 
-            $authplugin->authtype, 
-            $authplugin->userfields, 
-            new lang_string('auth_fieldlocks_help', 'auth'), 
-            true, 
-            false,
-            $authplugin->get_custom_user_profile_fields()
+            $settings, $authplugin->authtype, $authplugin->userfields, new lang_string('auth_fieldlocks_help', 'auth'), true, false, $authplugin->get_custom_user_profile_fields()
     );
 }

@@ -48,7 +48,7 @@ $string['help_sp_path']                             = 'Caminho absoluto da insta
 $string['help_dual_login']                          = 'Define se um usuário pode entrar no Moodle diretamente. Para entrar direto no Moodle você deve adicionar o parâmetro saml=off. Ex.: /login/index.php?saml=off';
 $string['help_single_signoff']                      = 'Fazer logout do usuário no Moodle e no Provedor de Identidade?';
 $string['help_idpattr']                             = 'Qual atributo do IdP deve ser usado para username?';
-$string['help_moodle_mapping']                      = 'Onde validar se o username existe? Se usar o idnumber, lembre de mapear em "Mapeamento de dados" abaixo';
+$string['help_moodle_mapping']                      = 'Onde validar se o username existe? Se usar o <code>' . get_string('idnumber') . '</code>, lembre de mapear em "Mapeamento de dados" abaixo';
 $string['help_autocreate']                          = 'Permitir criar novos usuários?';
 $string['help_authsource']                            = 'Nome da fonte de autenticação no provedor de serviço disponível em /config/authsources.php';
 $string['help_logout_url_redir']                    = 'URL para redirecionar os usuários ao sairem do Moodle. Se a URL for inválida ou vazia, o redirecionamento será para a página inicial do Moodle. (ex.: https://meusite.com/outraurl/)';
@@ -68,5 +68,6 @@ $string['error_field_idp_lastname']                 = 'O campo no IdP para o sob
 $string['error_lockconfig_field_map_firstname']     = 'O campo Nome no Mapeamento de dados deve ser informado';
 $string['error_lockconfig_field_map_lastname']      = 'O campo Sobrenome no Mapeamento de dados deve ser informado';
 $string['error_lockconfig_field_map_email']         = 'O campo Endereço de email no Mapeamento de dados deve ser informado';
+$string['error_novalidemailfromidp']                = 'Nenhum e-mail válido foi retornado do Provedor de Identidade';
 
 $string['success_config']                           = 'Todas as configurações foram salvas';

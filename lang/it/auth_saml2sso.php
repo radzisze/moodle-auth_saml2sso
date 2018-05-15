@@ -69,6 +69,7 @@ $string['error_field_idp_lastname']                 = 'L\'attributo per il cogno
 $string['error_lockconfig_field_map_firstname']     = 'La mappatura del nome è obbligatoria';
 $string['error_lockconfig_field_map_lastname']      = 'La mappatura del cognome è obbligatoria';
 $string['error_lockconfig_field_map_email']         = 'La mappatura dell\'Indirizzo email è obbligatoria';
+$string['error_novalidemailfromidp']                = 'There is no valid e-mail address from Identity Provider';
 
 $string['success_config']                           = 'La configurazione è stata salvata correttamente';
 
