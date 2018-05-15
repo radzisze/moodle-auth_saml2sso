@@ -48,8 +48,7 @@ $string['help_sp_path']                             = 'Percorso assoluto dell\'i
 $string['help_dual_login']                          = 'Permette all\'utente di accedere direttamente con un account manuale di Moodle. Per bypassare l\'IdP occorre aggiungere il parametro saml=off. Es.: /login/index.php?saml=off';
 $string['help_single_signoff']                      = 'Il logout da Moodle attiva anche il logout dall\'IdP e dalla sessione di Single SignOn';
 $string['help_idpattr']                             = 'L\'attributo che identifica l\'utente per l\'IdP';
-$string['help_moodle_mapping']                      = 'Il campo del profilo Moodle con cui cercare l\'utente. Se ' .
-        get_string('idnumber') . ', ricordarsi di mapparlo nelle impostazioni più sotto';
+$string['help_moodle_mapping']                      = 'Il campo del profilo Moodle con cui cercare l\'utente. Se ' . get_string('idnumber') . ', ricordarsi di mapparlo nelle impostazioni più sotto';
 $string['help_autocreate']                          = 'Crea l\'utente Moodle all\'accesso se non presente';
 $string['help_entityid']                            = 'Nome della sorgente di autenticazione SSP, come registrata in /config/authsources.php';
 $string['help_logout_url_redir']                    = 'URL a cui ridirigere dopo il logout. Se non è valido o vuoto, si verrà rediretti alla pagina principale di Moodle. (es.: https://go.to/another/url)';
@@ -69,5 +68,6 @@ $string['error_field_idp_lastname']                 = 'L\'attributo per il cogno
 $string['error_lockconfig_field_map_firstname']     = 'La mappatura del nome è obbligatoria';
 $string['error_lockconfig_field_map_lastname']      = 'La mappatura del cognome è obbligatoria';
 $string['error_lockconfig_field_map_email']         = 'La mappatura dell\'Indirizzo email è obbligatoria';
+$string['error_novalidemailfromidp']                = 'There is no valid e-mail address from Identity Provider';
 
 $string['success_config']                           = 'La configurazione è stata salvata correttamente';

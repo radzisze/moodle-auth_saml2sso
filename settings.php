@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,162 +26,124 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    
-    $yesno = array(get_string('no'), get_string('yes'));
 
-    $settings->add(new admin_setting_heading(
-            'auth_saml2sso/pluginname', 
-            new lang_string('settings_saml2sso', 'auth_saml2sso'), 
-            new lang_string('auth_saml2ssodescription', 'auth_saml2sso')
-        )
+    $yesno = array(
+        get_string('no'), 
+        get_string('yes')
     );
 
-    $field_setting = 'sp_path';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            !empty(getenv('SIMPLESAMLPHP_CONFIG_DIR')) ? dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR')) : '',
-            PARAM_TEXT,
-            50,
-            255
-        )
+    $settings->add(
+            new admin_setting_heading('auth_saml2sso/pluginname', 
+                    new lang_string('settings_saml2sso', 'auth_saml2sso'), 
+                    new lang_string('auth_saml2ssodescription', 'auth_saml2sso')
+            )
     );
-    
-    $field_setting = 'dual_login';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
-        )
+
+    $fieldsetting = 'sp_path';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 
+                    !empty(getenv('SIMPLESAMLPHP_CONFIG_DIR')) ? dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR')) : '', PARAM_TEXT, 50, 255
+            )
     );
-    
-    $field_setting = 'single_signoff';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
-        )
+
+    $fieldsetting = 'dual_login';
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $yesno
+            )
     );
-    
-    $field_setting = 'idpattr';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_TEXT,
-            50,
-            255
-        )
+
+    $fieldsetting = 'single_signoff';
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting,
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'),
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $yesno
+            )
     );
-    
-    $field_setting = 'moodle_mapping';
+
+    $fieldsetting = 'idpattr';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), '', PARAM_TEXT, 50, 255
+            )
+    );
+
+    $fieldsetting = 'moodle_mapping';
     $fields = array(
-        'username' => get_string('username'),
-        'idnumber' => get_string('idnumber'),
-        'email' => get_string('email'),
+        'username'      => get_string('username'),
+        'idnumber'      => get_string('idnumber'),
+        'email'         => get_string('email'),
     );
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $fields
-        )
-    );    
-    
-    $field_setting = 'autocreate';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
-        )
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $fields
+            )
     );
-    
-    $field_setting = 'entityid';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_TEXT,
-            50,
-            255
-        )
+
+    $fieldsetting = 'autocreate';
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $yesno
+            )
     );
-    
-    $field_setting = 'logout_url_redir';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_URL,
-            50,
-            255
-        )
+
+    $fieldsetting = 'entityid';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), '', PARAM_TEXT, 50, 255
+            )
     );
-    
-    $field_setting = 'edit_profile';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
-        )
+
+    $fieldsetting = 'logout_url_redir';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), '', PARAM_URL, 50, 255
+            )
     );
-    
-    $field_setting = 'field_idp_fullname';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
-        )
+
+    $fieldsetting = 'edit_profile';
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $yesno
+            )
     );
-    
-    $field_setting = 'field_idp_firstname';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_TEXT,
-            50,
-            255
-        )
+
+    $fieldsetting = 'field_idp_fullname';
+    $settings->add(
+            new admin_setting_configselect('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), 0, $yesno
+            )
     );
-    
-    $field_setting = 'field_idp_lastname';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_TEXT,
-            50,
-            255
-        )
+
+    $fieldsetting = 'field_idp_firstname';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), '', PARAM_TEXT, 50, 255
+            )
     );
-    
+
+    $fieldsetting = 'field_idp_lastname';
+    $settings->add(
+            new admin_setting_configtext_with_maxlength('auth_saml2sso/' . $fieldsetting, 
+                    new lang_string('label_' . $fieldsetting, 'auth_saml2sso'), 
+                    new lang_string('help_' . $fieldsetting, 'auth_saml2sso'), '', PARAM_TEXT, 50, 255
+            )
+    );
+
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('saml2sso');
     display_auth_lock_options(
-            $settings, 
-            $authplugin->authtype, 
-            $authplugin->userfields, 
-            new lang_string('auth_fieldlocks_help', 'auth'), 
-            true, 
-            false,
-            $authplugin->get_custom_user_profile_fields()
+            $settings, $authplugin->authtype, $authplugin->userfields, new lang_string('auth_fieldlocks_help', 'auth'), true, false, $authplugin->get_custom_user_profile_fields()
     );
 }
