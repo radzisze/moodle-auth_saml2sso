@@ -52,6 +52,12 @@ function xmldb_auth_saml2sso_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.4.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion < 2018031000) {
+        // Convert entityid key to authsource key
+        if (empty(get_config('auth_saml2sso', 'authsource')) && !empty(get_config('auth_saml2sso', 'entityid'))) {
+            set_config('authsource', get_config('auth_saml2sso', 'entityid'), 'auth_saml2sso');
+        }
+    }
 
     return true;
 }

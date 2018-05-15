@@ -49,9 +49,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         'dual_login' => 1,
         'single_signoff' => 1,
         'idpattr' => '',
-        'mdlattr' => 'username',
+        'moodle_mapping' => 'username',
         'autocreate' => 0,
-        'entityid' => '',
+        'authsource' => '',
         'logout_url_redir' => '',
         'edit_profile' => 0,
         'field_idp_fullname' => 1,
@@ -75,18 +75,29 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'saml2sso';
-        $componentname = (array) get_config(self::COMPONENT_NAME);
-        $legacycomponentname = (array) get_config(self::LEGACY_COMPONENT_NAME);
-        $this->config = (object) array_merge($this->defaults, $componentname, $legacycomponentname);
-        $this->mapping = (object) self::$stringmapping;
+        $componentName = (array) get_config(self::COMPONENT_NAME);
+        $legacyComponentName = (array) get_config(self::LEGACY_COMPONENT_NAME);
+        $this->config = (object) array_merge($this->defaults, $componentName, $legacyComponentName);
+        if (empty($this->config->authsource)) {
+            // Uses old entityid key
+            $this->config->authsource = $this->config->entityid;
+            debugging('authsource config key empty, using old entityid key', DEBUG_DEVELOPER);
+        }
+        $this->mapping = (object) self::$stringMapping;
     }
 
     /**
      * Load SimpleSAMLphp library autoloader
      */
-    private function getsspauth() {
-        require_once ($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php');
-        return $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
+    private function getSSPauth() {
+        require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
+
+        if (class_exists('\SimpleSAML\Auth\Simple')) {
+            return new \SimpleSAML\Auth\Simple($this->config->authsource);
+        }
+        // Backward compatibility, will be dropped
+        // since version < 1.15.3 are insecure
+        return new SimpleSAML_Auth_Simple($this->config->authsource);
     }
 
     /**
@@ -184,10 +195,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
          */
         $uid = trim(core_text::strtolower($attributes[$this->config->idpattr][0]));
 
-        /**
-         * Now we check if the Id returned from IdP exists in our Moodle database
-         */
-        $isuser = $DB->get_record('user', array($this->config->mdlattr => $uid));
+        // Now we check if the Id returned from IdP exists in our Moodle database
+        $isuser = $DB->get_record('user', array($this->config->moodle_mapping => $uid));
 
         $newuser = false;
         if (!$isuser) {
@@ -411,9 +420,45 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         }
 
         require $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
-        include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        $sspconfig = SimpleSAML_Configuration::getInstance();
+        if (version_compare($sspconfig->getVersion(), '1.15.3') < 0) {
+            echo $OUTPUT->notification('SimpleSAMLphp lib seems too old ('
+                    . $sspconfig->getVersion() . ') and insecure, please upgrade it', \core\output\notification::NOTIFY_WARNING);
+        }
+        echo $OUTPUT->notification('SimpleSAMLphp version is ' . $sspconfig->getVersion(), \core\output\notification::NOTIFY_INFO);
+
+        @include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         if ($config['store.type'] == 'phpsession') {
             echo $OUTPUT->notification('It seems SimpleSAMLphp uses default PHP session storage, it could be troublesome: switch to another store.type in config.php', \core\output\notification::NOTIFY_INFO);
+        }
+
+        $sourcesnames = array_map(function($source){
+            return $source->getAuthId();
+        }, \SimpleSAML_Auth_Source::getSourcesOfType('saml:SP'));
+        if (empty($this->config->authsource) || !in_array($this->config->authsource, $sourcesnames)) {
+            echo $OUTPUT->notification('Invalid authentication source. Available sources: '
+                    . implode(', ', $sourcesnames), \core\output\notification::NOTIFY_WARNING);
+            return;
+        }
+
+        if (!empty($this->config->user_directory)) {
+            $plugin = get_auth_plugin($this->config->user_directory);
+            if (!$plugin) {
+                echo $OUTPUT->notification('Invalid directory plugin \''
+                        . $this->config->user_directory . '\'', \core\output\notification::NOTIFY_WARNING);
+            }
+            if (method_exists($plugin, 'test_settings')) {
+                $options[$this->config->user_directory] = get_string('pluginname', 'auth_'.$this->config->user_directory);
+                $url = new moodle_url('/auth/test_settings.php', array('sesskey'=>sesskey(), 'auth' => $this->config->user_directory));
+                echo $OUTPUT->notification('A sync process with \'' . get_string('pluginname', 'auth_'.$this->config->user_directory)
+                        . '\' auth plugin is enable. <a href="' . $url
+                        . '">Check its configuration</a>.', \core\output\notification::NOTIFY_INFO);
+
+            }
+            else {
+                echo $OUTPUT->notification('A sync process with \'' . get_string('pluginname', 'auth_'.$this->config->user_directory)
+                        . '\' auth plugin is enable. Please check its configuration too.', \core\output\notification::NOTIFY_INFO);
+            }
         }
 
         echo $OUTPUT->notification('Everything seems ok', \core\output\notification::NOTIFY_SUCCESS);

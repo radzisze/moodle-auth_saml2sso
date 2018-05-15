@@ -25,7 +25,16 @@ The key for this plugin is that you can use your exists Service Provider (SP) wi
 * Auto create users - Allow create new users
 * SP source name - Generally default-sp in SimpleSAMLphp
 * Logout URL to redirect users after logout
+* User synchronization source (see below)
 * Allow users to edit or not the profile
 * Ability to break the full name from IdP into firstname and lastname
 
-To override the authentication and login directly in Moodle (ex.: using admin account), add the saml=off parameter in the URL (ex.: https://my.moodle/login/index.php?saml=off)
+To override the authentication and login directly in Moodle (ex.: using admin account), add the `saml=off` parameter in the URL (ex.: https://my.moodle/login/index.php?saml=off)
+
+## User synchronization
+
+SAML-based authentication services couldn't provide a user list suitable for users synchronization. But, in scenarios with a single IdP within the same organization (no discovery nor federation) is common that the IdP uses LDAP or a SQL DB as authentication backend.
+
+You can configure the LDAP or DB Moodle auth plugin in order to access to that backend, leaving the plugin itself disabled, and configure SAML2 SSO auth to obtain user list from it.
+
+The option 'Takeover existing users' provides an easy way to migrate  a Moodle system from LDAP (or DB) to SAML-based SSO. User conversion will run as a *scheduled task*.
