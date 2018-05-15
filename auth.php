@@ -31,8 +31,13 @@ require_once($CFG->libdir . '/authlib.php');
  */
 class auth_plugin_saml2sso extends auth_plugin_base {
 
-    // The name of the component. Used by the configuration.
+    /**
+     * The name of the component. Used by the configuration.
+     */
     const COMPONENT_NAME = 'auth_saml2sso';
+    /**
+     * Legacy name of the component.
+     */
     const LEGACY_COMPONENT_NAME = 'auth/saml2sso';
 
     /**
@@ -58,7 +63,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Mapping vars
      * @var string
      */
-    public static $stringMapping = array(
+    public static $stringmapping = array(
         'email' => 'email',
         'idnumber' => 'idnumber',
         'firstname' => 'givenName',
@@ -70,21 +75,20 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      */
     public function __construct() {
         $this->authtype = 'saml2sso';
-        $componentName = (array) get_config(self::COMPONENT_NAME);
-        $legacyComponentName = (array) get_config(self::LEGACY_COMPONENT_NAME);
-        $this->config = (object) array_merge($this->defaults, $componentName, $legacyComponentName);
-        $this->mapping = (object) self::$stringMapping;
+        $componentname = (array) get_config(self::COMPONENT_NAME);
+        $legacycomponentname = (array) get_config(self::LEGACY_COMPONENT_NAME);
+        $this->config = (object) array_merge($this->defaults, $componentname, $legacycomponentname);
+        $this->mapping = (object) self::$stringmapping;
     }
 
     /**
      * Load SimpleSAMLphp library autoloader
      */
-    private function getSSPauth() {
-        require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
-
-        return new SimpleSAML_Auth_Simple($this->config->entityid);
+    private function getsspauth() {
+        require_once ($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php');
+        return $auth = new SimpleSAML_Auth_Simple($this->config->entityid);
     }
-    
+
     /**
      * @global string $SESSION
      * @return type
@@ -92,9 +96,12 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function loginpage_hook() {
         global $SESSION;
 
-        // Check if dual login is enabled.
-        // Can bypass IdP auth.
-        // To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
+        /**
+         * Check if dual login is enabled.
+         * Can bypass IdP auth.
+         * To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
+         * 
+         */
         if ((int) $this->config->dual_login) {
             $saml = optional_param('saml', 'on', PARAM_TEXT);
             if ($saml == 'off' || isset($SESSION->saml)) {
@@ -115,18 +122,18 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function logoutpage_hook() {
         global $CFG;
 
-        $urlLogout = filter_var($this->config->logout_url_redir, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) ? $this->config->logout_url_redir : $CFG->wwwroot;
+        $urllogout = filter_var($this->config->logout_url_redir, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) ? $this->config->logout_url_redir : $CFG->wwwroot;
 
         // Check if we need to sign off users from IdP too
         if ((int) $this->config->single_signoff) {
-            $auth = $this->getSSPauth();
+            $auth = $this->getsspauth();
 
-            $urlLogout = $auth->getLogoutURL($urlLogout);
+            $urllogout = $auth->getLogoutURL($urllogout);
         }
 
         require_logout();
 
-        redirect($urlLogout);
+        redirect($urllogout);
     }
 
     /**
@@ -138,25 +145,27 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function saml2_login() {
         global $DB, $USER, $CFG;
 
-        $auth = $this->getSSPauth();
+        $auth = $this->getsspauth();
         $auth->requireAuth();
         $attributes = $auth->getAttributes();
 
-        // Email attribute
-        // Here we insure that e-mail returned from identity provider (IdP) is catched
-        // whenever it is email or mail attribute name
+        /**
+         * Email attribute
+         * Here we insure that e-mail returned from identity provider (IdP) is catched
+         * whenever it is email or mail attribute name
+         */
         if (isset($attributes['email'])) {
-            $attributes[$this->mapping->email][0] = trim($attributes['email'][0]);
-        }
-        else if (isset($attributes['mail'])) {
-            $attributes[$this->mapping->email][0] = trim($attributes['mail'][0]);
-        }
-        else {
-            ;  // Hum...
+            $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['email'][0]));
+        } else if (isset($attributes['mail'])) {
+            $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['mail'][0]));
+        } else {
+            $this->error_page(get_string('novalidemailfromidp', self::COMPONENT_NAME));
         }
 
-        // If the field containing the user's name is a unique field, we need to break
-        // into firstname and lastname
+        /**
+         * If the field containing the user's name is a unique field, we need to break
+         * into firstname and lastname
+         */
         if ((int) $this->config->field_idp_fullname) {
             // First name attribute
             $attributes[$this->mapping->firstname][0] = strstr($attributes[$this->config->field_idp_firstname][0], " ", true) ? core_text::strtoupper(trim(strstr($attributes[$this->config->field_idp_firstname][0], " ", true))) : core_text::strtoupper(trim($attributes[$this->config->field_idp_firstname][0]));
@@ -167,12 +176,17 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             $attributes[$this->mapping->lastname][0] = trim($attributes[$this->config->field_idp_lastname][0]);
         }
 
-        // User Id returned from IdP
-        // Will be used to get user from our Moodle database if exists
-      	// create_user_record lowercases the username, so we need to lower it here.
+        /**
+         * User Id returned from IdP
+         * Will be used to get user from our Moodle database if exists
+         * create_user_record lowercases the username, so we need to lower it here.
+         * 
+         */
         $uid = trim(core_text::strtolower($attributes[$this->config->idpattr][0]));
 
-        // Now we check if the Id returned from IdP exists in our Moodle database
+        /**
+         * Now we check if the Id returned from IdP exists in our Moodle database
+         */
         $isuser = $DB->get_record('user', array($this->config->mdlattr => $uid));
 
         $newuser = false;
@@ -188,7 +202,9 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             }
         }
 
-        // We expected that here we have a existing user or a new one
+        /**
+         * We expected that here we have a existing user or a new one
+         */
         if ($isuser) {
             $USER = get_complete_user_data('username', $isuser->username);
         } else {
@@ -200,7 +216,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         $standardkeys = array_keys(get_object_vars($mapconfig));
         $customkeys = $this->get_custom_user_profile_fields();
         $allkeys = array_merge($standardkeys, $customkeys);
-        
+
         $touched = false;
         foreach ($allkeys as $key) {
             if (preg_match('/^field_updatelocal_(.+)$/', $key, $match)) {
@@ -269,7 +285,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * @param string $password The password
      * @return bool Authentication success or failure.
      */
-    function user_login($username, $password) {
+    public function user_login($username, $password) {
         return false;
     }
 
@@ -283,7 +299,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * @return boolean result
      *
      */
-    function user_update_password($user, $newpassword) {
+    public function user_update_password($user, $newpassword) {
         return false;
     }
 
@@ -291,7 +307,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * 
      * @return boolean
      */
-    function prevent_local_passwords() {
+    public function prevent_local_passwords() {
         return true;
     }
 
@@ -300,7 +316,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      *
      * @return bool
      */
-    function is_internal() {
+    public function is_internal() {
         return false;
     }
 
@@ -310,7 +326,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_change_password() {
+    public function can_change_password() {
         return false;
     }
 
@@ -320,7 +336,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      *
      * @return moodle_url
      */
-    function change_password_url() {
+    public function change_password_url() {
         return null;
     }
 
@@ -329,7 +345,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_reset_password() {
+    public function can_reset_password() {
         return false;
     }
 
@@ -338,17 +354,17 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      *
      * @return bool
      */
-    function can_be_manually_set() {
+    public function can_be_manually_set() {
         return false;
     }
 
     /**
      * @return type
      */
-    function can_edit_profile() {
+    public function can_edit_profile() {
         return (int) $this->config->edit_profile;
     }
-    
+
     /**
      * @global type $PAGE
      * @global type $OUTPUT
@@ -358,7 +374,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     public function error_page($msg) {
         global $PAGE, $OUTPUT, $SITE;
 
-        $auth = $this->getSSPauth();
+        $auth = $this->getsspauth();
 
         $samlLogout = $auth->getLogoutURL($this->config->logout_url_redir);
 
@@ -370,9 +386,10 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         echo $OUTPUT->footer();
         exit;
     }
-    
+
     /**
      * Test if settings are correct, print info to output.
+     * @author Marco Ferrante <marco at csita.unige.it>
      */
     public function test_settings() {
         global $OUTPUT;
@@ -383,24 +400,22 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             echo $OUTPUT->notification('SimpleSAMLphp lib path not set', \core\output\notification::NOTIFY_WARNING);
             return;
         }
-        if (!empty(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
-                && $this->config->sp_path != dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))) {
+        if (!empty(getenv('SIMPLESAMLPHP_CONFIG_DIR')) && $this->config->sp_path != dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))) {
             echo $OUTPUT->notification('SimpleSAMLphp lib path differs from the environment default ('
-                        . dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
-                        . '): it could be fine, but check if the library has been updated', \core\output\notification::NOTIFY_INFO);
+                    . dirname(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+                    . '): it could be fine, but check if the library has been updated', \core\output\notification::NOTIFY_INFO);
         }
-        if (!file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php')
-		|| !file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php')) {
+        if (!file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php') || !file_exists($this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php')) {
             echo $OUTPUT->notification('SimpleSAMLphp lib path seems to be invalid', \core\output\notification::NOTIFY_WARNING);
             return;
         }
 
         require $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
-        @include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+        include $this->config->sp_path . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         if ($config['store.type'] == 'phpsession') {
-            echo $OUTPUT->notification('It seems SimpleSAMLphp uses default PHP session storage, it could be troublesome: switch to another store.type in config.php', \core\output\notification::NOTIFY_INFO);		
+            echo $OUTPUT->notification('It seems SimpleSAMLphp uses default PHP session storage, it could be troublesome: switch to another store.type in config.php', \core\output\notification::NOTIFY_INFO);
         }
-        
+
         echo $OUTPUT->notification('Everything seems ok', \core\output\notification::NOTIFY_SUCCESS);
     }
 
