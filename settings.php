@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,8 +25,34 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
+/**
+ * An helper to test if a plugin can sync users.
+ *
+ * @param type $plugin An auth plugin
+ * @return bool true if $plugin can sync users
+ */
+if (!function_exists('Can_sync_user')) {
+function Can_sync_user($plugin) {
+    if ($plugin instanceof auth_plugin_base
+            && method_exists($plugin, 'sync_users')) {
+        // Check argument number?
+        return true;
+    }
+
+    return false;
+}
+}
+
+
 if ($ADMIN->fulltree) {
-    
+
+    if (empty(getenv('SIMPLESAMLPHP_CONFIG_DIR'))
+            && empty(get_config('auth_saml2sso', 'sp_path'))) {
+        $warning = $OUTPUT->notification('SIMPLESAMLPHP_CONFIG_DIR environment variable is not set'
+                . ', review your Apache configuration or manually specify the lib path', \core\output\notification::NOTIFY_WARNING);
+        $settings->add(new admin_setting_heading('auth_saml2sso/envvar_missing', '', $warning));
+    }
+
     $yesno = array(get_string('no'), get_string('yes'));
 
     $settings->add(new admin_setting_heading(
@@ -117,7 +144,8 @@ if ($ADMIN->fulltree) {
         )
     );
     
-    $field_setting = 'entityid';
+    // Migrate from misleading entityid config key
+    $field_setting = 'authsource';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
             new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
@@ -140,7 +168,59 @@ if ($ADMIN->fulltree) {
             255
         )
     );
+
+    // User synchronization with external source
+    $settings->add(new admin_setting_heading('auth_saml2sso/sync_settings',
+            new lang_string('label_sync_settings', 'auth_saml2sso'), 'Un IdP SAML non può fornire un elenco di utenti da sincronizzare, ma spesso ha dietro un backend LDAP o un DB da cui possono essere letti. Configurare la relativa sorgente di autenticazione.'));
+
+    // The user source plugin, must be a "directory style" auth source.
+    $authsavailable = core_component::get_plugin_list('auth');
+    $cansyncauthplugins = array();
+    foreach ($authsavailable as $auth => $dir) {
+        $authplugin = get_auth_plugin($auth);
+        if (Can_sync_user($authplugin)) {
+            $cansyncauthplugins[$auth] = $authplugin;
+        }
+    }
+
+    $field_setting = 'user_directory';
+    $fields = array();
+    foreach($cansyncauthplugins as $auth => $authplugin) {
+        $fields[$auth] = $authplugin->get_title();
+    }
+    $fields[''] = null;
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $fields
+        )
+    );
+
+    $field_setting = 'takeover_users';
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $yesno
+        )
+    );
+
+    $field_setting = 'verbose_sync';
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $yesno
+        )
+    );
     
+    $settings->add(new admin_setting_heading('auth_saml2sso/profile_settings',
+            new lang_string('label_profile_settings', 'auth_saml2sso'), ''));
+
     $field_setting = 'edit_profile';
     $settings->add(new admin_setting_configselect(
             'auth_saml2sso/' . $field_setting, 
@@ -188,12 +268,6 @@ if ($ADMIN->fulltree) {
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('saml2sso');
     display_auth_lock_options(
-            $settings, 
-            $authplugin->authtype, 
-            $authplugin->userfields, 
-            new lang_string('auth_fieldlocks_help', 'auth'), 
-            true, 
-            false,
-            $authplugin->get_custom_user_profile_fields()
+            $settings, $authplugin->authtype, $authplugin->userfields, new lang_string('auth_fieldlocks_help', 'auth'), true, false, $authplugin->get_custom_user_profile_fields()
     );
 }
