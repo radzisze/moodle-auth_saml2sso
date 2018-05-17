@@ -101,11 +101,38 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     }
 
     /**
+     * Makes the saml2 plugin appear as a idsp on login screen
+     * @param string $wantsurl
+     * @return array
+     * Added by Praxis
+     */
+    function loginpage_idp_list($wantsurl) {
+        $url = '?saml=on';
+
+        if (isset($this->config->button_url) AND !empty($this->config->button_url)) {
+         $button_path = new moodle_url($this->config->button_url);
+        } else {
+         $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        }
+
+        return [[
+            'url' => new moodle_url($url),
+            'name' => '',
+            'iconurl' => $button_path
+
+        ]];
+    }
+
+
+    /**
      * @global string $SESSION
      * @return type
+     * Changed by praxis
      */
     public function loginpage_hook() {
-        global $SESSION;
+        global $SESSION, $CFG, $OUTPUT, $PAGE;
+
+
 
         /**
          * Check if dual login is enabled.
@@ -114,7 +141,19 @@ class auth_plugin_saml2sso extends auth_plugin_base {
          * 
          */
         if ((int) $this->config->dual_login) {
-            $saml = optional_param('saml', 'on', PARAM_TEXT);
+
+            /* changes by praxis */
+            // check if saml is set to on in the url, to redirect to the saml login
+            if(isset($_GET['saml'])=='on') {
+                $SESSION->saml='on';
+                $saml = optional_param('saml', 'on', PARAM_TEXT);
+                $this->saml2_login();
+
+            } else {
+                $SESSION->saml = 'off';
+                return;
+            }
+
             if ($saml == 'off' || isset($SESSION->saml)) {
                 $SESSION->saml = 'off';
                 return;

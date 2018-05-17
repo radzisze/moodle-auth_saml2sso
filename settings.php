@@ -62,6 +62,19 @@ if ($ADMIN->fulltree) {
         )
     );
 
+    $field_setting = 'button_url';
+    $settings->add(new admin_setting_configtext_with_maxlength(
+            'auth_saml2sso/'. $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            '',
+            PARAM_TEXT,
+            80,
+            255
+        )
+    );
+
+
     $field_setting = 'sp_path';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
