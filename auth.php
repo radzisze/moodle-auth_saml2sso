@@ -83,20 +83,20 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             $this->config->authsource = $this->config->entityid;
             debugging('authsource config key empty, using old entityid key', DEBUG_DEVELOPER);
         }
-        $this->mapping = (object) self::$stringMapping;
+        $this->mapping = (object) self::$stringmapping;
     }
 
     /**
      * Load SimpleSAMLphp library autoloader
      */
-    private function getSSPauth() {
+    private function getsspauth() {
         require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
 
         if (class_exists('\SimpleSAML\Auth\Simple')) {
             return new \SimpleSAML\Auth\Simple($this->config->authsource);
         }
         // Backward compatibility, will be dropped
-        // since version < 1.15.3 are insecure
+        // since any version < 1.15.3 is insecure
         return new SimpleSAML_Auth_Simple($this->config->authsource);
     }
 
@@ -130,9 +130,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * Changed by praxis
      */
     public function loginpage_hook() {
-        global $SESSION, $CFG, $OUTPUT, $PAGE;
-
-
+        global $SESSION, $CFG;
 
         /**
          * Check if dual login is enabled.
