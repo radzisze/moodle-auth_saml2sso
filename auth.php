@@ -123,7 +123,6 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         ]];
     }
 
-
     /**
      * @global string $SESSION
      * @return type
