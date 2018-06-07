@@ -54,8 +54,14 @@ function xmldb_auth_saml2sso_upgrade($oldversion) {
     // Put any upgrade step following this.
     if ($oldversion < 2018031000) {
         // Convert entityid key to authsource key
-        if (empty(get_config('auth_saml2sso', 'authsource')) && !empty(get_config('auth_saml2sso', 'entityid'))) {
-            set_config('authsource', get_config('auth_saml2sso', 'entityid'), 'auth_saml2sso');
+        $entityid = get_config('auth_saml2sso', 'entityid');
+        if ($entityid && empty(get_config('auth_saml2sso', 'authsource'))) {
+            set_config('authsource', $entityid, 'auth_saml2sso');
+
+            // Delete old setting.
+            set_config('entityid', null, 'auth_saml2sso');
+
+            upgrade_plugin_savepoint(true, 2017080100, 'auth', 'saml2sso');
         }
     }
 

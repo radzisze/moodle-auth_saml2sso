@@ -109,55 +109,49 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     function loginpage_idp_list($wantsurl) {
         $url = '?saml=on';
 
-        if (isset($this->config->button_url) AND !empty($this->config->button_url)) {
-         $button_path = new moodle_url($this->config->button_url);
-        } else {
-         $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        if (!empty($this->config->button_url)) {
+            $button_path = new moodle_url($this->config->button_url);
+        }
+        else {
+            $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        }
+        $button_name = 'SAML Login';
+        if (!empty($this->config->button_name)) {
+            $button_name = new moodle_url($this->config->button_name);
         }
 
         return [[
             'url' => new moodle_url($url),
-            'name' => '',
+            'name' => $button_name,
             'iconurl' => $button_path
-
         ]];
     }
 
     /**
      * @global string $SESSION
      * @return type
-     * Changed by praxis
      */
     public function loginpage_hook() {
         global $SESSION, $CFG;
 
-        /**
-         * Check if dual login is enabled.
-         * Can bypass IdP auth.
-         * To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
-         * 
-         */
-        if ((int) $this->config->dual_login) {
+        $saml = optional_param('saml', 'undefined', PARAM_TEXT);
 
-            /* changes by praxis */
-            // check if saml is set to on in the url, to redirect to the saml login
-            if(isset($_GET['saml'])=='on') {
-                $SESSION->saml='on';
-                $saml = optional_param('saml', 'on', PARAM_TEXT);
-                $this->saml2_login();
-
-            } else {
-                $SESSION->saml = 'off';
-                return;
-            }
-
-            if ($saml == 'off' || isset($SESSION->saml)) {
-                $SESSION->saml = 'off';
-                return;
-            }
+        // If saml=off, go to default login page regardless any other
+        // settings. Useful to administrators to recover from misconfiguration
+        if ($saml == 'off') {
+            $SESSION->saml = 'off';
+            return;
         }
 
-        $this->saml2_login();
+        // If dual login is disabled, the user is redirect to the IdP
+        if (!$this->config->dual_login || $saml == 'on') {
+            $SESSION->saml='on';
+            $this->saml2_login();
+        }
+        else {
+            $SESSION->saml = 'off';
+            return;
+        }
     }
 
     /**
@@ -227,7 +221,6 @@ class auth_plugin_saml2sso extends auth_plugin_base {
          * User Id returned from IdP
          * Will be used to get user from our Moodle database if exists
          * create_user_record lowercases the username, so we need to lower it here.
-         * 
          */
         $uid = trim(core_text::strtolower($attributes[$this->config->idpattr][0]));
 
