@@ -138,7 +138,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
 
         // If saml=off, go to default login page regardless any other
         // settings. Useful to administrators to recover from misconfiguration
-        if ($saml == 'off') {
+        if ($saml == 'off'
+                || (!empty($SESSION->saml) && $SESSION->saml == 'off')) {
             $SESSION->saml = 'off';
             return;
         }
