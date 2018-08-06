@@ -257,7 +257,17 @@ if ($ADMIN->fulltree) {
             $yesno
         )
     );
-    
+
+    $field_setting = 'response_email';
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $yesno
+        )
+    );
+
     $field_setting = 'field_idp_firstname';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,

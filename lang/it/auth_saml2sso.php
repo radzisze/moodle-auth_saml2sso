@@ -43,9 +43,11 @@ $string['label_field_idp_firstname']                = 'Attributo IdP del nome';
 $string['label_field_idp_lastname']                 = 'Attributo IdP del cognome';
 $string['label_field_idp_fullname']                 = 'Nome completo dall\'IdP?';
 $string['label_instructions_title']                 = 'Istruzioni';
-$string['label_instructions_p1']                    = '<p>La mappatura è richiesta per i campi:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
+$string['label_instructions_p1']                    = '<p>La mappatura è richiesta per i campi:</p><ul><li>Nome => givenName</li><li>Cognome => surname</li><li>Indirizzo email => email</li></ul><p>Puoi cambiarla dall\'array <code>$stringMapping</code> in <code>auth.php</code></p>';
+$string['label_response_email']                     = 'Mappa indirizzo Email';
 
 //_help config strings
+$string['help_response_email']                      = 'L\'IdP/ADFS restituisce il valore Email o Mail';
 $string['help_button_url']                          = 'URL dell\'icona da usare sul bottone di login. Massimo 50 pixel di altezza';
 $string['help_button_name']                         = 'Etichetta per il bottone di login';
 $string['help_sp_path']                             = 'Percorso assoluto dell\'installazione di SSP. Es.: /var/www/simplesamlphp/';
