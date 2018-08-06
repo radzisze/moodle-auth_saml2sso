@@ -44,10 +44,10 @@ $string['label_field_idp_lastname']                 = 'Lastname field from Ident
 $string['label_field_idp_fullname']                 = 'Full name from Identity Provider';
 $string['label_instructions_title']                 = 'Instructions';
 $string['label_instructions_p1']                    = '<p>You must fill the following Data mapping fields as:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringmapping</code> array in <code>auth.php</code></p>';
-$string['label_response_email']                     = 'Match Email address';
+$string['label_allow_empty_email']                  = 'Allow empty email';
 
 //_help config strings
-$string['help_response_email']                      = 'The IdP/ADFS returns Email or Mail value';
+$string['help_allow_empty_email']                   = 'Allow the IdP/ADFS don\'t return Email or Mail value. User will be prompted to complete the profile.';
 $string['help_button_url']                          = 'Url to an image that will be used as login button. Max 50px high';
 $string['help_button_name']                         = 'A caption for the login button';
 $string['help_sp_path']                             = 'Absolute path to Service Provider (SP) installation. Ex.: /var/www/simplesamlphp/';

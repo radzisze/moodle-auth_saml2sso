@@ -44,10 +44,10 @@ $string['label_field_idp_lastname']                 = 'Attributo IdP del cognome
 $string['label_field_idp_fullname']                 = 'Nome completo dall\'IdP?';
 $string['label_instructions_title']                 = 'Istruzioni';
 $string['label_instructions_p1']                    = '<p>La mappatura è richiesta per i campi:</p><ul><li>Nome => givenName</li><li>Cognome => surname</li><li>Indirizzo email => email</li></ul><p>Puoi cambiarla dall\'array <code>$stringMapping</code> in <code>auth.php</code></p>';
-$string['label_response_email']                     = 'Mappa indirizzo Email';
+$string['label_allow_empty_email']                  = 'Accetta email nulle';
 
 //_help config strings
-$string['help_response_email']                      = 'L\'IdP/ADFS restituisce il valore Email o Mail';
+$string['help_allow_empty_email']                   = 'Permette all\'IdP/ADFS di non fornire il valore Email o Mail. All\'utente verrà richiesto di completare il profilo';
 $string['help_button_url']                          = 'URL dell\'icona da usare sul bottone di login. Massimo 50 pixel di altezza';
 $string['help_button_name']                         = 'Etichetta per il bottone di login';
 $string['help_sp_path']                             = 'Percorso assoluto dell\'installazione di SSP. Es.: /var/www/simplesamlphp/';
@@ -75,7 +75,7 @@ $string['error_field_idp_lastname']                 = 'L\'attributo per il cogno
 $string['error_lockconfig_field_map_firstname']     = 'La mappatura del nome è obbligatoria';
 $string['error_lockconfig_field_map_lastname']      = 'La mappatura del cognome è obbligatoria';
 $string['error_lockconfig_field_map_email']         = 'La mappatura dell\'Indirizzo email è obbligatoria';
-$string['error_novalidemailfromidp']                = 'There is no valid e-mail address from Identity Provider';
+$string['error_novalidemailfromidp']                = 'Il tuo Identity Provider non fornisce un indirizzo email valido';
 
 $string['success_config']                           = 'La configurazione è stata salvata correttamente';
 

@@ -191,21 +191,20 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         $auth->requireAuth();
         $attributes = $auth->getAttributes();
 
-      if ($this->config->response_email) {
-            /**
-             * Email attribute
-             * Here we insure that e-mail returned from identity provider (IdP) is catched
-             * whenever it is email or mail attribute name
-             */
-
-            if (isset($attributes['email'])) {
-                $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['email'][0]));
-            } else if (isset($attributes['mail'])) {
-                $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['mail'][0]));
-            } else {
-                $this->error_page(get_string('novalidemailfromidp', self::COMPONENT_NAME));
-            }
+        /**
+         * Email attribute
+         * Here we insure that e-mail returned from identity provider (IdP) is catched
+         * whenever it is email or mail attribute name
+         */
+        if (isset($attributes['email'])) {
+            $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['email'][0]));
+        } else if (isset($attributes['mail'])) {
+            $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['mail'][0]));
+        } else if (!$this->config->allow_empty_email) {
+            $this->error_page(get_string('error_novalidemailfromidp', self::COMPONENT_NAME));
         }
+        // if $this->config->allow_empty_email is true and the IdP don't provide a
+        // email address, the user is redirect to the profile page to complete
 
         /**
          * If the field containing the user's name is a unique field, we need to break
