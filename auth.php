@@ -162,12 +162,17 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * If URL is invalid or empty, redirect to Moodle main page
      */
     public function logoutpage_hook() {
-        global $CFG;
+        global $CFG, $USER;
+
+        if ($USER->auth != $this->authtype) {
+            // SingleLogOut must not be called for user handled by other plugins
+            return;
+        }
 
         $urllogout = filter_var($this->config->logout_url_redir, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) ? $this->config->logout_url_redir : $CFG->wwwroot;
 
         // Check if we need to sign off users from IdP too
-        if ((int) $this->config->single_signoff) {
+        if ((int) $this->config->single_signoff ) {
             $auth = $this->getsspauth();
 
             $urllogout = $auth->getLogoutURL($urllogout);
