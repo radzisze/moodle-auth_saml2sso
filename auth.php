@@ -203,7 +203,7 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         } else if (!$this->config->allow_empty_email) {
             $this->error_page(get_string('error_novalidemailfromidp', self::COMPONENT_NAME));
         }
-        // if $this->config->allow_empty_email is true and the IdP don't provide a
+        // if $this->config->allow_empty_email is true and the IdP don't provide an
         // email address, the user is redirect to the profile page to complete
 
         /**
