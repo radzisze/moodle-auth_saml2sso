@@ -32,15 +32,15 @@ defined('MOODLE_INTERNAL') || die;
  * @return bool true if $plugin can sync users
  */
 if (!function_exists('Can_sync_user')) {
-function Can_sync_user($plugin) {
-    if ($plugin instanceof auth_plugin_base
-            && method_exists($plugin, 'sync_users')) {
-        // Check argument number?
-        return true;
-    }
+    function Can_sync_user($plugin) {
+        if ($plugin instanceof auth_plugin_base
+                && method_exists($plugin, 'sync_users')) {
+            // Check argument number?
+            return true;
+        }
 
-    return false;
-}
+        return false;
+    }
 }
 
 
@@ -62,19 +62,6 @@ if ($ADMIN->fulltree) {
         )
     );
 
-    $field_setting = 'button_url';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_TEXT,
-            80,
-            255
-        )
-    );
-
-
     $field_setting = 'sp_path';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
@@ -87,16 +74,19 @@ if ($ADMIN->fulltree) {
         )
     );
     
-    $field_setting = 'dual_login';
-    $settings->add(new admin_setting_configselect(
-            'auth_saml2sso/' . $field_setting, 
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'), 
-            0, 
-            $yesno
+    // Migrate from misleading entityid config key
+    $field_setting = 'authsource';
+    $settings->add(new admin_setting_configtext_with_maxlength(
+            'auth_saml2sso/'. $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            '',
+            PARAM_TEXT,
+            50,
+            255
         )
     );
-    
+
     $field_setting = 'single_signoff';
     $settings->add(new admin_setting_configselect(
             'auth_saml2sso/' . $field_setting, 
@@ -107,6 +97,18 @@ if ($ADMIN->fulltree) {
         )
     );
     
+    $field_setting = 'logout_url_redir';
+    $settings->add(new admin_setting_configtext_with_maxlength(
+            'auth_saml2sso/'. $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            '',
+            PARAM_URL,
+            50,
+            255
+        )
+    );
+
     $field_setting = 'idpattr';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
@@ -144,11 +146,37 @@ if ($ADMIN->fulltree) {
         )
     );
     
-    // Migrate from misleading entityid config key
-    $field_setting = 'authsource';
+    // Dual login settings
+    $settings->add(new admin_setting_heading('auth_saml2sso/dual_login_settings',
+            new lang_string('label_dual_login_settings', 'auth_saml2sso'),
+            new lang_string('label_dual_login_help', 'auth_saml2sso')));
+
+    $field_setting = 'dual_login';
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $yesno
+        )
+    );
+
+    $field_setting = 'button_url';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            '',
+            PARAM_TEXT,
+            80,
+            255
+        )
+    );
+
+    $field_setting = 'button_name';
+    $settings->add(new admin_setting_configtext_with_maxlength(
+            'auth_saml2sso/'. $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
             new lang_string('help_' . $field_setting, 'auth_saml2sso'),
             '',
             PARAM_TEXT,
@@ -156,22 +184,11 @@ if ($ADMIN->fulltree) {
             255
         )
     );
-    
-    $field_setting = 'logout_url_redir';
-    $settings->add(new admin_setting_configtext_with_maxlength(
-            'auth_saml2sso/'. $field_setting,
-            new lang_string('label_' . $field_setting, 'auth_saml2sso'), 
-            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
-            '',
-            PARAM_URL,
-            50,
-            255
-        )
-    );
 
     // User synchronization with external source
     $settings->add(new admin_setting_heading('auth_saml2sso/sync_settings',
-            new lang_string('label_sync_settings', 'auth_saml2sso'), 'Un IdP SAML non può fornire un elenco di utenti da sincronizzare, ma spesso ha dietro un backend LDAP o un DB da cui possono essere letti. Configurare la relativa sorgente di autenticazione.'));
+            new lang_string('label_sync_settings', 'auth_saml2sso'),
+            new lang_string('label_sync_settings_help', 'auth_saml2sso')));
 
     // The user source plugin, must be a "directory style" auth source.
     $authsavailable = core_component::get_plugin_list('auth');
@@ -231,6 +248,16 @@ if ($ADMIN->fulltree) {
         )
     );
     
+    $field_setting = 'allow_empty_email';
+    $settings->add(new admin_setting_configselect(
+            'auth_saml2sso/' . $field_setting,
+            new lang_string('label_' . $field_setting, 'auth_saml2sso'),
+            new lang_string('help_' . $field_setting, 'auth_saml2sso'),
+            0,
+            $yesno
+        )
+    );
+
     $field_setting = 'field_idp_fullname';
     $settings->add(new admin_setting_configselect(
             'auth_saml2sso/' . $field_setting, 
@@ -240,7 +267,7 @@ if ($ADMIN->fulltree) {
             $yesno
         )
     );
-    
+
     $field_setting = 'field_idp_firstname';
     $settings->add(new admin_setting_configtext_with_maxlength(
             'auth_saml2sso/'. $field_setting,

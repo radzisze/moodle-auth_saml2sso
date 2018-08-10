@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-function xmldb_auth_db_install() {
+function xmldb_auth_saml2sso_install() {
     global $CFG, $DB;
 
 }

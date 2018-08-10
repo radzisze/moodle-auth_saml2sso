@@ -83,20 +83,20 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             $this->config->authsource = $this->config->entityid;
             debugging('authsource config key empty, using old entityid key', DEBUG_DEVELOPER);
         }
-        $this->mapping = (object) self::$stringMapping;
+        $this->mapping = (object) self::$stringmapping;
     }
 
     /**
      * Load SimpleSAMLphp library autoloader
      */
-    private function getSSPauth() {
+    private function getsspauth() {
         require_once $this->config->sp_path . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . '_autoload.php';
 
         if (class_exists('\SimpleSAML\Auth\Simple')) {
             return new \SimpleSAML\Auth\Simple($this->config->authsource);
         }
         // Backward compatibility, will be dropped
-        // since version < 1.15.3 are insecure
+        // since any version < 1.15.3 is insecure
         return new SimpleSAML_Auth_Simple($this->config->authsource);
     }
 
@@ -109,58 +109,50 @@ class auth_plugin_saml2sso extends auth_plugin_base {
     function loginpage_idp_list($wantsurl) {
         $url = '?saml=on';
 
-        if (isset($this->config->button_url) AND !empty($this->config->button_url)) {
-         $button_path = new moodle_url($this->config->button_url);
-        } else {
-         $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        if (!empty($this->config->button_url)) {
+            $button_path = new moodle_url($this->config->button_url);
+        }
+        else {
+            $button_path =  new moodle_url('/auth/saml2sso/pix/login-btn.png');
+        }
+        $button_name = 'SAML Login';
+        if (!empty($this->config->button_name)) {
+            $button_name = new moodle_url($this->config->button_name);
         }
 
         return [[
             'url' => new moodle_url($url),
-            'name' => '',
+            'name' => $button_name,
             'iconurl' => $button_path
-
         ]];
     }
-
 
     /**
      * @global string $SESSION
      * @return type
-     * Changed by praxis
      */
     public function loginpage_hook() {
-        global $SESSION, $CFG, $OUTPUT, $PAGE;
+        global $SESSION, $CFG;
 
+        $saml = optional_param('saml', 'undefined', PARAM_TEXT);
 
-
-        /**
-         * Check if dual login is enabled.
-         * Can bypass IdP auth.
-         * To bypass IdP auth, go to <moodle-url>/login/index.php?saml=off
-         * 
-         */
-        if ((int) $this->config->dual_login) {
-
-            /* changes by praxis */
-            // check if saml is set to on in the url, to redirect to the saml login
-            if(isset($_GET['saml'])=='on') {
-                $SESSION->saml='on';
-                $saml = optional_param('saml', 'on', PARAM_TEXT);
-                $this->saml2_login();
-
-            } else {
-                $SESSION->saml = 'off';
-                return;
-            }
-
-            if ($saml == 'off' || isset($SESSION->saml)) {
-                $SESSION->saml = 'off';
-                return;
-            }
+        // If saml=off, go to default login page regardless any other
+        // settings. Useful to administrators to recover from misconfiguration
+        if ($saml == 'off'
+                || (!empty($SESSION->saml) && $SESSION->saml == 'off')) {
+            $SESSION->saml = 'off';
+            return;
         }
 
-        $this->saml2_login();
+        // If dual login is disabled, the user is redirect to the IdP
+        if (!$this->config->dual_login || $saml == 'on') {
+            $SESSION->saml='on';
+            $this->saml2_login();
+        }
+        else {
+            $SESSION->saml = 'off';
+            return;
+        }
     }
 
     /**
@@ -170,12 +162,17 @@ class auth_plugin_saml2sso extends auth_plugin_base {
      * If URL is invalid or empty, redirect to Moodle main page
      */
     public function logoutpage_hook() {
-        global $CFG;
+        global $CFG, $USER;
+
+        if ($USER->auth != $this->authtype) {
+            // SingleLogOut must not be called for user handled by other plugins
+            return;
+        }
 
         $urllogout = filter_var($this->config->logout_url_redir, FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED) ? $this->config->logout_url_redir : $CFG->wwwroot;
 
         // Check if we need to sign off users from IdP too
-        if ((int) $this->config->single_signoff) {
+        if ((int) $this->config->single_signoff ) {
             $auth = $this->getsspauth();
 
             $urllogout = $auth->getLogoutURL($urllogout);
@@ -208,9 +205,11 @@ class auth_plugin_saml2sso extends auth_plugin_base {
             $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['email'][0]));
         } else if (isset($attributes['mail'])) {
             $attributes[$this->mapping->email][0] = core_text::strtolower(trim($attributes['mail'][0]));
-        } else {
-            $this->error_page(get_string('novalidemailfromidp', self::COMPONENT_NAME));
+        } else if (!$this->config->allow_empty_email) {
+            $this->error_page(get_string('error_novalidemailfromidp', self::COMPONENT_NAME));
         }
+        // if $this->config->allow_empty_email is true and the IdP don't provide an
+        // email address, the user is redirect to the profile page to complete
 
         /**
          * If the field containing the user's name is a unique field, we need to break

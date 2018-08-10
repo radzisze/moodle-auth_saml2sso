@@ -27,6 +27,8 @@ $string['pluginname']                               = 'SAML2 SSO Auth';
 $string['settings_saml2sso']                        = '';
 
 //label config strings
+$string['label_button_url']                         = 'URL icona';
+$string['label_button_name']                        = 'Etichetta bottone';
 $string['label_sp_path']                            = 'Percorso librerie SimpleSAMLphp';
 $string['label_dual_login']                         = 'Dual login';
 $string['label_single_signoff']                     = 'Single Sign Off';
@@ -41,11 +43,15 @@ $string['label_field_idp_firstname']                = 'Attributo IdP del nome';
 $string['label_field_idp_lastname']                 = 'Attributo IdP del cognome';
 $string['label_field_idp_fullname']                 = 'Nome completo dall\'IdP?';
 $string['label_instructions_title']                 = 'Istruzioni';
-$string['label_instructions_p1']                    = '<p>La mappatura è richiesta per i campi:</p><ul><li>Firstname => givenName</li><li>Surname => surname</li><li>Email address: => email</li></ul><p>You can change this in <code>$stringMapping</code> array in <code>auth.php</code></p>';
+$string['label_instructions_p1']                    = '<p>La mappatura è richiesta per i campi:</p><ul><li>Nome => givenName</li><li>Cognome => surname</li><li>Indirizzo email => email</li></ul><p>Puoi cambiarla dall\'array <code>$stringMapping</code> in <code>auth.php</code></p>';
+$string['label_allow_empty_email']                  = 'Accetta email nulle';
 
 //_help config strings
+$string['help_allow_empty_email']                   = 'Permette all\'IdP/ADFS di non fornire il valore Email o Mail. All\'utente verrà richiesto di completare il profilo';
+$string['help_button_url']                          = 'URL dell\'icona da usare sul bottone di login. Massimo 50 pixel di altezza';
+$string['help_button_name']                         = 'Etichetta per il bottone di login';
 $string['help_sp_path']                             = 'Percorso assoluto dell\'installazione di SSP. Es.: /var/www/simplesamlphp/';
-$string['help_dual_login']                          = 'Permette all\'utente di accedere direttamente con un account manuale di Moodle. Per bypassare l\'IdP occorre aggiungere il parametro saml=off. Es.: /login/index.php?saml=off';
+$string['help_dual_login']                          = 'Mostra all\'utente la maschera di login di Moodle';
 $string['help_single_signoff']                      = 'Il logout da Moodle attiva anche il logout dall\'IdP e dalla sessione di Single SignOn';
 $string['help_idpattr']                             = 'L\'attributo che identifica l\'utente per l\'IdP';
 $string['help_moodle_mapping']                      = 'Il campo del profilo Moodle con cui cercare l\'utente. Se \'' .
@@ -69,13 +75,23 @@ $string['error_field_idp_lastname']                 = 'L\'attributo per il cogno
 $string['error_lockconfig_field_map_firstname']     = 'La mappatura del nome è obbligatoria';
 $string['error_lockconfig_field_map_lastname']      = 'La mappatura del cognome è obbligatoria';
 $string['error_lockconfig_field_map_email']         = 'La mappatura dell\'Indirizzo email è obbligatoria';
-$string['error_novalidemailfromidp']                = 'There is no valid e-mail address from Identity Provider';
+$string['error_novalidemailfromidp']                = 'Il tuo Identity Provider non fornisce un indirizzo email valido';
 
 $string['success_config']                           = 'La configurazione è stata salvata correttamente';
 
 $string['label_profile_settings']                   = 'Attributi SAML e profilo utente';
 
+$string['label_dual_login_settings']  = 'Login multiplo';
+$string['label_dual_login_help']   = '
+Per default, gli utenti al login verranno rediretti all\'IdP o al servizio di
+discovery configurato nella sorgente di autenticazione SimpleSAMLphp.<br />
+Per usare il login standard di Moodle occorre aggiungere il parametro saml=off. Es.: /login/index.php?saml=off<br />
+Con il login multiplo, l\'utente deve scegliere il metodo di autenticazione.';
 $string['label_sync_settings']        = 'Sincronizzazione utenti';
+$string['label_sync_settings_help']   = '
+Un IdP SAML non può fornire un elenco di utenti da sincronizzare, ma spesso
+ha dietro un backend LDAP o un DB da cui possono essere letti.
+Configurare la relativa sorgente di autenticazione.';
 $string['label_user_directory']          = 'Origine utenti';
 $string['help_user_directory']           = 'Un plugin di autentiazione in grado di elencare gli utenti';
 $string['label_takeover_users']       = 'Rileva utenti esistenti';
