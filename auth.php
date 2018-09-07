@@ -191,6 +191,8 @@ class auth_plugin_saml2sso extends auth_plugin_base {
         // We expected that here we have a existing user or a new one
         if ($isuser) {
             $USER = get_complete_user_data('username', $isuser->username);
+            // Set the description from DB record since get_complete_user_data returns true instead of the description content.
+            $USER->description = $isuser->description;
         } else {
             $this->error_page(get_string('error_create_user', self::COMPONENT_NAME));
         }
